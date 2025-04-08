@@ -1,5 +1,3 @@
-// static/js/cart.js
-
 // Функция для отображения ошибки
 function displayError(elementId, message) {
     const element = document.getElementById(elementId);
