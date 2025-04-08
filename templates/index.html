@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Доставка Еды</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Навигационная панель -->
+        <nav class="navbar">
+            <a href="/" class="logo">🍽️ Доставка Еды</a>
+            <button class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></button>
+            <div class="nav-links" id="navLinks">
+                <a href="/" class="active">Главная</a>
+                <a href="/restaurants">Рестораны</a>
+                <a href="/profile">Настройки аккаунта</a>
+            </div>
+        </nav>
+
+        <!-- Поиск -->
+        <div class="content">
+            <div class="search-bar">
+                <input type="text" placeholder="Поиск ресторанов или блюд">
+            </div>
+
+            <!-- Featured Restaurants -->
+            <section class="featured-restaurants">
+                <h2>Рекомендуемые рестораны</h2>
+                <div class="restaurant-grid">
+                    <div class="restaurant-card">
+                        <img src="/static/images/la-bella-italia.jpg" alt="La Bella Italia">
+                        <h3>La Bella Italia</h3>
+                        <p>Аутентичная итальянская кухня с современным подходом.</p>
+                    </div>
+                    <div class="restaurant-card">
+                        <img src="/static/images/sushi-world.jpg" alt="Sushi World">
+                        <h3>Sushi World</h3>
+                        <p>Свежие суши и роллы, приготовленные опытными шеф-поварами.</p>
+                    </div>
+                    <div class="restaurant-card">
+                        <img src="/static/images/chez-pierre.jpg" alt="Chez Pierre">
+                        <h3>Chez Pierre</h3>
+                        <p>Классические французские блюда в уютной атмосфере.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Popular Dishes -->
+            <section class="popular-dishes">
+                <h2>Популярные блюда</h2>
+                <div class="dish-grid">
+                    <div class="dish-card">
+                        <img src="/static/images/margherita-pizza.jpg" alt="Пицца Маргарита">
+                        <h3>Пицца Маргарита</h3>
+                        <p>Классическая пицца с свежей моцареллой и базиликом.</p>
+                    </div>
+                    <div class="dish-card">
+                        <img src="/static/images/sushi-platter.jpg" alt="Ассорти суши">
+                        <h3>Ассорти суши</h3>
+                        <p>Разнообразие свежих суши, чтобы порадовать ваши вкусовые рецепторы.</p>
+                    </div>
+                    <div class="dish-card">
+                        <img src="/static/images/chocolate-lava-cake.jpg" alt="Шоколадный лавовый кекс">
+                        <h3>Шоколадный лавовый кекс</h3>
+                        <p>Нежный десерт с тающим шоколадным центром.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Подвал -->
+    <footer class="footer">
+        <div class="footer-section">
+            <h4>Быстрые ссылки</h4>
+            <a href="/">Главная</a>
+            <a href="/contact">Свяжитесь с нами</a>
+            <a href="/privacy">Политика конфиденциальности</a>
+        </div>
+        <div class="footer-section">
+            <h4>Следите за нами</h4>
+            <a href="https://twitter.com"><i class="fab fa-twitter"></i></a>
+            <a href="https://instagram.com"><i class="fab fa-instagram"></i></a>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

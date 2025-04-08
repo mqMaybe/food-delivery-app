@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация - Доставка Еды</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Навигационная панель -->
+        <nav class="navbar">
+            <a href="/" class="logo">Доставка Еды</a>
+            <button class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></button>
+            <div class="nav-links" id="navLinks">
+                <a href="/about">О нас</a>
+                <a href="/faq">Часто задаваемые вопросы</a>
+                <a href="/login">Войти</a>
+                <a href="/register" class="active">Регистрация</a>
+            </div>
+        </nav>
+
+        <!-- Основной контент -->
+        <div class="content">
+            <div class="register-container">
+                <h2>Регистрация</h2>
+                <div id="registerResult" class="error-message"></div>
+                <form id="registerForm">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Имя</label>
+                        <input type="text" class="form-control" id="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Электронная почта</label>
+                        <input type="email" class="form-control" id="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Пароль</label>
+                        <input type="password" class="form-control" id="password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="role" class="form-label">Роль</label>
+                        <select class="form-select" id="role" required>
+                            <option value="customer">Клиент</option>
+                            <option value="restaurant">Ресторан</option>
+                        </select>
+                    </div>
+                    <div class="mb-3" id="cuisineTypeSection" style="display: none;">
+                        <label for="cuisineType" class="form-label">Тип кухни</label>
+                        <select class="form-select" id="cuisineType">
+                            <option value="">Выберите тип кухни</option>
+                            <option value="italian">Итальянская</option>
+                            <option value="chinese">Китайская</option>
+                            <option value="indian">Индийская</option>
+                            <option value="other">Другая</option>
+                        </select>
+                    </div>
+                    <button type="submit" id="registerBtn" class="btn btn-primary w-100">Зарегистрироваться</button>
+                </form>
+                <p class="text-center mt-3">Уже есть аккаунт? <a href="/login">Войти</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Подвал -->
+    <footer class="footer">
+        <div class="footer-section">
+            <h4>Быстрые ссылки</h4>
+            <a href="/about">О нас</a>
+            <a href="/faq">Часто задаваемые вопросы</a>
+            <a href="/terms">Условия использования</a>
+        </div>
+        <div class="footer-section">
+            <h4>Свяжитесь с нами</h4>
+            <p>ул. Вкусная, 123, Город Еды, Россия</p>
+            <p>Телефон: (123) 456-7890</p>
+        </div>
+        <div class="footer-section">
+            <h4>Следите за нами</h4>
+            <a href="#"><i class="fab fa-vk"></i></a>
+            <a href="#"><i class="fab fa-telegram"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+        </div>
+    </footer>
+
+    <script src="/static/js/register.js"></script>
+    <script>
+        function toggleMenu() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

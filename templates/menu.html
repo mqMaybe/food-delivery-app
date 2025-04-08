@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Меню - La Bella Italia</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Навигационная панель -->
+        <nav class="navbar">
+            <a href="/" class="logo">🍽️ Доставка Еды</a>
+            <button class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></button>
+            <div class="nav-links" id="navLinks">
+                <a href="/">Главная</a>
+                <a href="/restaurants" class="active">Рестораны</a>
+            </div>
+        </nav>
+
+        <!-- Основной контент -->
+        <div class="content">
+        <!-- Информация о ресторане -->
+        <section class="restaurant-info">
+            <div class="restaurant-image">
+                <img src="/static/images/la-bella-italia.jpg" alt="La Bella Italia">
+            </div>
+            <div class="restaurant-details">
+                <h1>La Bella Italia</h1>
+                <p>Испытайте вкус Италии с нашими аутентичными итальянскими блюдами, приготовленными из самых свежих ингредиентов.</p>
+                <div class="restaurant-actions">
+                    <button class="add-to-cart-btn">Добавить в корзину</button>
+                    <a href="/cart" class="proceed-to-checkout">Оформить заказ</a>
+                </div>
+            </div>
+        </section>
+
+            <!-- Меню -->
+            <section class="menu-section">
+                <h2>Меню</h2>
+                <div class="menu-grid">
+                    <div class="menu-item">
+                        <img src="/static/images/margherita-pizza.jpg" alt="Пицца Маргарита">
+                        <div class="menu-item-details">
+                            <h3>Пицца Маргарита</h3>
+                            <p class="price">$12.00</p>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <img src="/static/images/pasta-alfredo.jpg" alt="Паста Альфредо">
+                        <div class="menu-item-details">
+                            <h3>Паста Альфредо</h3>
+                            <p class="price">$15.00</p>
+                        </div>
+                    </div>
+                    <div class="menu-item">
+                        <img src="/static/images/tiramisu.jpg" alt="Тирамису">
+                        <div class="menu-item-details">
+                            <h3>Тирамису</h3>
+                            <p class="price">$8.00</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Отзывы -->
+            <section class="reviews-section">
+                <h2>Отзывы клиентов</h2>
+                <div class="review">
+                    <p>"Удивительная еда и фантастическая атмосфера. Пицца Маргарита — это must-try!"</p>
+                    <p class="review-author">— София Л.</p>
+                </div>
+                <div class="review">
+                    <p>"Нам очень понравилась Паста Альфредо! Отличный сервис и уютная атмосфера."</p>
+                    <p class="review-author">— Михаил Б.</p>
+                </div>
+            </section>
+
+            <!-- Контактная информация -->
+            <section class="contact-section">
+                <h2>Контактная информация</h2>
+                <p><strong>Адрес:</strong> 123 Culinary Lane, Food City</p>
+                <p><strong>Телефон:</strong> (555) 123-4567</p>
+                <p><strong>Email:</strong> <a href="mailto:contact@labellaitalia.com">contact@labellaitalia.com</a></p>
+            </section>
+        </div>
+    </div>
+
+    <!-- Подвал -->
+    <footer class="footer">
+        <div class="footer-copyright">
+            <p>© 2023 Доставка Еды. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Управление меню - Доставка Еды</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="logo">Доставка Еды</a>
+    <div class="nav-links" id="navLinks">
+      <a href="/restaurant-orders">Заказы</a>
+      <a href="/add-menu">Добавить блюдо</a>
+      <a href="/manage-menu">Управление меню</a>
+      <a href="/profile">Профиль</a>
+      <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Выйти</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h2><i class="fas fa-utensils"></i> Управление меню</h2>
+    <input id="manageRestaurantId" type="number" placeholder="ID ресторана">
+    <button id="loadMenuBtn"><i class="fas fa-sync-alt"></i> Загрузить меню</button>
+    <div id="manageMenuList"></div>
+  </div>
+
+  <div id="toastContainer" class="toast-container"></div>
+  <script src="/static/js/main.js"></script>
+  <script src="/static/js/manage-menu.js"></script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Корзина - Доставка Еды</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Навигационная панель -->
+        <nav class="navbar">
+            <a href="/" class="logo">Доставка Еды</a>
+            <button class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></button>
+            <div class="nav-links" id="navLinks">
+                <a href="/">Главная</a>
+                <a href="/restaurants">Рестораны</a>
+                <a href="/menu">Меню</a>
+                <a href="/cart" class="active">Корзина</a>
+                <a href="/my-orders">Мои заказы</a>
+                <a href="/profile">Профиль</a>
+                <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Выйти</a>
+            </div>
+        </nav>
+
+        <!-- Основной контент -->
+        <div class="content container mt-4">
+            <div class="row">
+                <!-- Левая часть: Корзина -->
+                <div class="col-md-8">
+                    <h3>Моя корзина</h3>
+                    <a href="/menu" class="mb-3 d-block">Вернуться к меню</a>
+                    <div id="cartItems">
+                        <!-- Товары будут добавлены через JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Правая часть: Мой заказ -->
+                <div class="col-md-4">
+                    <div class="order-summary">
+                        <h4>Мой заказ</h4>
+                        <div id="orderSummary">
+                            <!-- Итоги заказа будут добавлены через JavaScript -->
+                        </div>
+                        <div class="promo-code">
+                            <input type="text" class="form-control" id="promoCode" placeholder="Введите промокод">
+                            <button class="btn btn-outline-secondary" onclick="applyPromoCode()">Применить</button>
+                        </div>
+                        <div class="order-summary-item">
+                            <strong>ИТОГО</strong>
+                            <strong id="totalPrice">$0</strong>
+                        </div>
+                        <button class="checkout-btn" onclick="checkout()">Оформить заказ $0</button>
+                        <a href="#" class="d-block text-center mt-3">Забронировать столик</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Подвал -->
+    <footer class="footer">
+        <div class="footer-section">
+            <h4>Быстрые ссылки</h4>
+            <a href="/about">О нас</a>
+            <a href="/faq">Часто задаваемые вопросы</a>
+            <a href="/terms">Условия использования</a>
+        </div>
+        <div class="footer-section">
+            <h4>Свяжитесь с нами</h4>
+            <p>ул. Вкусная, 123, Город Еды, Россия</p>
+            <p>Телефон: (123) 456-7890</p>
+        </div>
+        <div class="footer-section">
+            <h4>Следите за нами</h4>
+            <a href="#"><i class="fab fa-vk"></i></a>
+            <a href="#"><i class="fab fa-telegram"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+        </div>
+    </footer>
+
+    <script src="/static/js/cart.js"></script>
+    <script>
+        function toggleMenu() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

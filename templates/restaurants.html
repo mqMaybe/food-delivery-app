@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Рестораны - Доставка Еды</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Навигационная панель -->
+        <nav class="navbar">
+            <a href="/" class="logo">Доставка Еды</a>
+            <button class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></button>
+            <div class="nav-links" id="navLinks">
+                <a href="/">Главная</a>
+                <a href="/restaurants" class="active">Рестораны</a>
+                <a href="/menu">Меню</a>
+                <a href="/cart">Корзина</a>
+                <a href="/my-orders">Мои заказы</a>
+                <a href="/profile">Профиль</a>
+                <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Выйти</a>
+            </div>
+        </nav>
+
+        <!-- Фильтры -->
+        <div class="content container filter-section">
+            <div class="row">
+                <div class="col-md-3">
+                    <label for="cuisineType">Тип кухни</label>
+                    <select id="cuisineType">
+                        <option value="all">ВСЕ</option>
+                        <option value="italian">Итальянская</option>
+                        <option value="chinese">Китайская</option>
+                        <option value="indian">Индийская</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="deliveryTime">Время доставки</label>
+                    <select id="deliveryTime">
+                        <option value="all">ВСЕ</option>
+                        <option value="30">Менее 30 минут</option>
+                        <option value="60">Менее 60 минут</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="rating">Минимальный рейтинг</label>
+                    <select id="rating">
+                        <option value="all">ВСЕ</option>
+                        <option value="3">3.0 и выше</option>
+                        <option value="4">4.0 и выше</option>
+                        <option value="4.5">4.5 и выше</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Список ресторанов -->
+        <div class="container">
+            <div class="row" id="restaurantList">
+                <!-- Рестораны будут добавлены через JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Подвал -->
+    <footer class="footer">
+        <div class="footer-section">
+            <h4>Быстрые ссылки</h4>
+            <a href="/about">О нас</a>
+            <a href="/faq">Часто задаваемые вопросы</a>
+            <a href="/terms">Условия использования</a>
+        </div>
+        <div class="footer-section">
+            <h4>Свяжитесь с нами</h4>
+            <p>ул. Вкусная, 123, Город Еды, Россия</p>
+            <p>Телефон: (123) 456-7890</p>
+        </div>
+        <div class="footer-section">
+            <h4>Следите за нами</h4>
+            <a href="#"><i class="fab fa-vk"></i></a>
+            <a href="#"><i class="fab fa-telegram"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+        </div>
+    </footer>
+
+    <script src="/static/js/restaurants.js"></script>
+    <script>
+        function toggleMenu() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
