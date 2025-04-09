@@ -43,14 +43,31 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        // Получаем CSRF-токен из мета-тега
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        if (!csrfToken) {
+            console.error('CSRF-токен не найден');
+            registerResult.textContent = 'Ошибка: CSRF-токен не найден';
+            return;
+        }
+
         try {
             const response = await fetch('/api/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-CSRF-Token': csrfToken
                 },
                 body: JSON.stringify({ name, email, password, role, cuisine_type: cuisineType }),
             });
+
+            // Проверяем, что сервер вернул JSON
+            const contentType = response.headers.get('Content-Type');
+            if (!contentType || !contentType.includes('application/json')) {
+                const text = await response.text();
+                console.error('Unexpected response:', text);
+                throw new Error('Сервер вернул не JSON: ' + text);
+            }
 
             const data = await response.json();
             if (!response.ok) {

@@ -3,28 +3,27 @@ package main
 import (
 	"log"
 	"log/slog"
+	"net/http"
 	"os"
 
-	"github.com/food-delivery-app/db"
-	"github.com/food-delivery-app/handlers"
-	"github.com/food-delivery-app/routes"
+	"food-delivery-app/internal/db"
+	"food-delivery-app/internal/delivery"
+	"food-delivery-app/internal/routes"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/csrf"
 	"github.com/joho/godotenv"
 )
 
 func main() {
-	// Логирование
 	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, nil)))
 
-	// Загрузка переменных окружения
 	err := godotenv.Load()
 	if err != nil {
 		slog.Error("Ошибка загрузки .env файла", "error", err)
 		log.Fatal("Ошибка загрузки .env файла")
 	}
 
-	// Инициализация базы данных
 	database, err := db.InitDB()
 	if err != nil {
 		slog.Error("Не удалось подключиться к базе данных", "error", err)
@@ -32,25 +31,29 @@ func main() {
 	}
 	defer database.Close()
 
-	// Инициализация приложения
-	app := &handlers.App{DB: database}
-
-	// Инициализация роутера Gin
+	app := &delivery.App{DB: database}
 	r := gin.Default()
 
-	// Подключение middleware
-	r.Use(csrf.Protect([]byte(os.Getenv("CSRF_SECRET")), csrf.Secure(false))) // Secure(false) для разработки
+	csrfMiddleware := csrf.Protect(
+		[]byte(os.Getenv("CSRF_SECRET")),
+		csrf.Secure(false),
+		csrf.Path("/"),
+	)
 
-	// Загрузка HTML-шаблонов
+	r.Use(func(c *gin.Context) {
+		handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			c.Writer = &csrfResponseWriter{c.Writer, w}
+			c.Request = r
+			c.Next()
+		})
+		csrfMiddleware(handler).ServeHTTP(c.Writer, c.Request)
+	})
+
 	r.LoadHTMLGlob("templates/*")
-
-	// Подключение статических файлов
 	r.Static("/static", "./static")
 
-	// Инициализация маршрутов
 	routes.SetupRoutes(r, app)
 
-	// Запуск сервера
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
@@ -60,4 +63,18 @@ func main() {
 		slog.Error("Не удалось запустить сервер", "error", err)
 		log.Fatal("Не удалось запустить сервер:", err)
 	}
+}
+
+type csrfResponseWriter struct {
+	gin.ResponseWriter
+	w http.ResponseWriter
+}
+
+func (crw *csrfResponseWriter) WriteHeader(code int) {
+	crw.w.WriteHeader(code)
+	crw.ResponseWriter.WriteHeader(code)
+}
+
+func (crw *csrfResponseWriter) Write(b []byte) (int, error) {
+	return crw.w.Write(b)
 }

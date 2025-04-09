@@ -13,6 +13,17 @@ function showToast(message, type = 'error') {
     }, 3000);
 }
 
+async function searchRestaurants() {
+    const searchInput = document.getElementById('search-input').value.trim();
+    if (!searchInput) {
+        alert('Пожалуйста, введите название ресторана для поиска');
+        return;
+    }
+
+    // Перенаправляем на страницу ресторанов с параметром поиска
+    window.location.href = `/restaurants?search=${encodeURIComponent(searchInput)}`;
+}
+
 // Функция для проверки авторизации
 async function checkAuth(requiredRole = null) {
     try {
@@ -45,14 +56,35 @@ async function checkAuth(requiredRole = null) {
 // Функция для выхода из системы
 async function logout() {
     try {
-        const response = await fetch('/api/logout', { method: 'POST' });
-        if (response.ok) {
-            window.location.href = '/login';
-        } else {
-            throw new Error('Не удалось выйти из системы');
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        if (!csrfToken) {
+            throw new Error('CSRF-токен не найден');
         }
+
+        const response = await fetch('/api/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken,
+            },
+        });
+
+        const contentType = response.headers.get('Content-Type');
+        let data = {};
+        if (contentType && contentType.includes('application/json')) {
+            data = await response.json();
+        } else {
+            const text = await response.text();
+            console.error('Ответ сервера не является JSON:', text);
+        }
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Не удалось выйти из системы');
+        }
+
+        window.location.href = '/login';
     } catch (error) {
-        console.error('Failed to logout:', error);
-        showToast(error.message);
+        console.error('Ошибка при выходе из системы:', error);
+        displayError(error.message);
     }
 }

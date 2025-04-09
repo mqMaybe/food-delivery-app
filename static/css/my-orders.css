@@ -1,0 +1,117 @@
+/* Стили для my-orders.html */
+.order-card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .order-card h5 {
+    margin: 0;
+    font-size: 1.2rem;
+  }
+  
+  .order-card p {
+    margin: 5px 0;
+    color: #666;
+  }
+  
+  .order-items {
+    margin-top: 10px;
+    padding-left: 20px;
+  }
+  
+  .track-btn {
+    background-color: #ff4d4d;
+    border: none;
+    padding: 8px 15px;
+    color: white;
+    border-radius: 5px;
+    font-weight: bold;
+  }
+  
+  .track-btn:hover {
+    background-color: #e04343;
+  }
+  
+  /* Стили для order-status.html */
+  .map-placeholder {
+    background-color: #f0f0f0;
+    height: 300px;
+    position: relative;
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .map-placeholder::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    background-color: #ff4d4d;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  .status-step {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .status-step .step-number {
+    width: 30px;
+    height: 30px;
+    background-color: #ddd;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+  }
+  
+  .status-step.active .step-number {
+    background-color: #ff4d4d;
+  }
+  
+  .status-step .step-details h5 {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+  
+  .status-step .step-details p {
+    margin: 0;
+    color: #666;
+  }
+  
+  .delivery-time {
+    background-color: #ff4d4d;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .message {
+    color: #666;
+    margin-bottom: 20px;
+  }
+  
+  .dismiss-btn {
+    background-color: #f0f0f0;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    width: 100%;
+    text-align: center;
+  }
+  
+  /* Стили для restaurant-orders.html */
+  #restaurantOrdersList {
+    margin-top: 20px;
+  }

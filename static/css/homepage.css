@@ -1,0 +1,252 @@
+/* static/css/home.css */
+
+/* Поиск */
+.search-bar {
+    max-width: 600px;
+    margin: 40px auto;
+    text-align: center;
+    position: relative;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 12px 20px 12px 50px; /* Отступ слева для иконки */
+    border: 1px solid #ddd;
+    border-radius: 25px;
+    font-size: 1rem;
+    color: #333;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.search-bar input:focus {
+    outline: none;
+    border-color: #ff4d4d;
+    box-shadow: 0 0 8px rgba(255, 77, 77, 0.2);
+}
+
+.search-bar input::placeholder {
+    color: #999;
+}
+
+.search-bar::before {
+    content: '\f002'; /* Иконка поиска из Font Awesome */
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #777;
+    font-size: 1rem;
+}
+
+/* Рекомендуемые рестораны */
+.featured-restaurants {
+    padding: 40px 0;
+}
+
+.featured-restaurants h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2d2d2d;
+    text-align: center;
+    margin-bottom: 40px;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 10px;
+}
+
+.restaurant-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    padding: 0 20px;
+}
+
+.restaurant-card {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.restaurant-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+}
+
+.restaurant-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.restaurant-card h3 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #2d2d2d;
+    margin: 15px 20px 10px;
+}
+
+.restaurant-card p {
+    font-size: 0.95rem;
+    color: #666;
+    margin: 0 20px 20px;
+}
+
+/* Популярные блюда */
+.popular-dishes {
+    padding: 40px 0;
+    background-color: #f8f9fa;
+}
+
+.popular-dishes h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2d2d2d;
+    text-align: center;
+    margin-bottom: 40px;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 10px;
+}
+
+.dish-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    padding: 0 20px;
+}
+
+.dish-card {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.dish-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+}
+
+.dish-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.dish-card h3 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #2d2d2d;
+    margin: 15px 20px 10px;
+}
+
+.dish-card p {
+    font-size: 0.95rem;
+    color: #666;
+    margin: 0 20px 20px;
+}
+
+/* Анимация для карточек */
+.restaurant-card,
+.dish-card {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .search-bar {
+        margin: 30px 20px;
+    }
+
+    .search-bar input {
+        font-size: 0.95rem;
+        padding: 10px 15px 10px 45px;
+    }
+
+    .search-bar::before {
+        left: 15px;
+        font-size: 0.95rem;
+    }
+
+    .featured-restaurants h2,
+    .popular-dishes h2 {
+        font-size: 1.8rem;
+    }
+
+    .restaurant-grid,
+    .dish-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        padding: 0 15px;
+    }
+
+    .restaurant-card h3,
+    .dish-card h3 {
+        font-size: 1.2rem;
+    }
+
+    .restaurant-card p,
+    .dish-card p {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .search-bar {
+        margin: 20px 15px;
+    }
+
+    .search-bar input {
+        font-size: 0.9rem;
+        padding: 8px 12px 8px 40px;
+    }
+
+    .search-bar::before {
+        left: 12px;
+        font-size: 0.9rem;
+    }
+
+    .featured-restaurants h2,
+    .popular-dishes h2 {
+        font-size: 1.5rem;
+    }
+
+    .restaurant-grid,
+    .dish-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        padding: 0 10px;
+    }
+
+    .restaurant-card img,
+    .dish-card img {
+        height: 180px;
+    }
+
+    .restaurant-card h3,
+    .dish-card h3 {
+        font-size: 1.1rem;
+    }
+
+    .restaurant-card p,
+    .dish-card p {
+        font-size: 0.85rem;
+    }
+}

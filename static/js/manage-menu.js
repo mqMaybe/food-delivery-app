@@ -1,7 +1,54 @@
-document.addEventListener('DOMContentLoaded', async () => {
-    const session = await checkAuth('restaurant');
-    if (!session) return;
+// static/js/manage-menu.js
 
+// Функция для отображения ошибки
+function displayError(elementId, message) {
+    const element = document.getElementById(elementId);
+    if (element) {
+        element.innerHTML = `<p class="text-danger">${message}</p>`;
+        element.style.display = 'block';
+    } else {
+        console.error(`Element with ID ${elementId} not found`);
+    }
+}
+
+// Функция для выхода из системы
+async function logout() {
+    try {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        if (!csrfToken) {
+            throw new Error('CSRF-токен не найден');
+        }
+
+        const response = await fetch('/api/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken,
+            },
+        });
+
+        const contentType = response.headers.get('Content-Type');
+        let data = {};
+        if (contentType && contentType.includes('application/json')) {
+            data = await response.json();
+        } else {
+            const text = await response.text();
+            console.error('Ответ сервера не является JSON:', text);
+            throw new Error('Ответ сервера не является JSON');
+        }
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Не удалось выйти из системы');
+        }
+
+        window.location.href = '/login';
+    } catch (error) {
+        console.error('Ошибка при выходе из системы:', error);
+        displayError('manageMenuList', error.message);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
     const loadMenuBtn = document.getElementById('loadMenuBtn');
     const restaurantIdInput = document.getElementById('manageRestaurantId');
     const manageMenuList = document.getElementById('manageMenuList');
@@ -19,13 +66,25 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         try {
-            const response = await fetch(`/api/menu?restaurant_id=${restaurantId}`);
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || 'Не удалось загрузить меню');
+            const response = await fetch(`/api/menu-restaurants?restaurant_id=${restaurantId}`);
+            let responseBody;
+
+            // Проверяем заголовок Content-Type
+            const contentType = response.headers.get('Content-Type');
+            if (!contentType || !contentType.includes('application/json')) {
+                responseBody = await response.text();
+                console.error('Ответ сервера не является JSON:', responseBody);
+                throw new Error('Ответ сервера не является JSON');
             }
 
-            const menuItems = await response.json();
+            // Парсим JSON только один раз
+            responseBody = await response.json();
+
+            if (!response.ok) {
+                throw new Error(responseBody.error || `Ошибка сервера: ${response.status} ${response.statusText}`);
+            }
+
+            const menuItems = responseBody;
             if (menuItems.length === 0) {
                 manageMenuList.innerHTML = '<p>Меню пусто. Добавьте блюда.</p>';
                 return;
@@ -34,8 +93,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             manageMenuList.innerHTML = '';
             menuItems.forEach(item => {
                 const div = document.createElement('div');
+                div.className = 'menu-item';
                 div.innerHTML = `
-                    <p>ID: ${item.id} | ${item.name} - ${item.price} ₽: ${item.description}</p>
+                    <p>ID: ${item.id} | ${item.name} - ${item.price} ₽</p>
                     <button onclick="editMenuItem(${item.id}, ${restaurantId})">Редактировать</button>
                     <button onclick="deleteMenuItem(${item.id}, ${restaurantId})">Удалить</button>
                 `;
@@ -59,10 +119,16 @@ async function editMenuItem(id, restaurantId) {
     }
 
     try {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        if (!csrfToken) {
+            throw new Error('CSRF-токен не найден');
+        }
+
         const response = await fetch('/api/menu', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken,
             },
             body: JSON.stringify({
                 menu_id: id,
@@ -91,10 +157,16 @@ async function deleteMenuItem(id, restaurantId) {
     }
 
     try {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        if (!csrfToken) {
+            throw new Error('CSRF-токен не найден');
+        }
+
         const response = await fetch('/api/menu', {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken,
             },
             body: JSON.stringify({ menu_id: id, restaurant_id: restaurantId }),
         });

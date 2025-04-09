@@ -1,0 +1,54 @@
+/* static/css/my-orders.css */
+
+/* Стили для обновления статуса */
+.status-update {
+    margin-top: 20px;
+}
+
+.status-update h5 {
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.status-update div {
+    margin-bottom: 10px;
+}
+
+.status-update input[type="radio"] {
+    margin-right: 10px;
+}
+
+.status-update label {
+    font-size: 1rem;
+    color: #555;
+}
+
+.update-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-right: 10px;
+}
+
+.update-btn:hover {
+    background-color: #c82333;
+}
+
+.dismiss-btn {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.dismiss-btn:hover {
+    background-color: #5a6268;
+}

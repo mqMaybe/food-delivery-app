@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ .CSRFToken }}">
+    <title>{{ .MenuItem.Name }} - FoodieExpress</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link rel="stylesheet" href="/static/css/navbar.css">
+    <link rel="stylesheet" href="/static/css/product-details.css">
+    <link rel="stylesheet" href="/static/css/footer.css">
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Навигационная панель -->
+        <nav class="navbar">
+            <a href="/" class="logo">🍽️ FoodieExpress</a>
+            <div class="nav-links">
+                <a href="/">Главная</a>
+                <a href="/restaurants">Рестораны</a>
+                <a href="/cart">Корзина</a>
+                <a href="/my-orders">Мои заказы</a>
+                <a href="/order-status/:id">Статус заказа</a>
+                <a href="/my-orders">Мои заказы</a>
+                <a href="/profile">Профиль</a>
+                <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Выйти</a>
+            </div>
+        </nav>
+
+        <!-- Основной контент -->
+        <div class="content">
+            <!-- Детали блюда -->
+            <section class="product-details">
+                <div class="product-images">
+                    <div class="main-image">
+                        <img id="main-image" src="{{ if .MenuItem.ImageURL.String }}{{ .MenuItem.ImageURL.String }}{{ else }}/static/images/food-placeholder.jpg{{ end }}" alt="{{ .MenuItem.Name }}">
+                    </div>
+                    <div class="thumbnail-images">
+                        <!-- Превью-изображения (пока статические) -->
+                        <img src="/static/images/food-placeholder.jpg" alt="Thumbnail 1" onclick="changeImage(this.src)">
+                        <img src="/static/images/food-placeholder.jpg" alt="Thumbnail 2" onclick="changeImage(this.src)">
+                        <img src="/static/images/food-placeholder.jpg" alt="Thumbnail 3" onclick="changeImage(this.src)">
+                    </div>
+                </div>
+                <div class="product-info">
+                    <h1>{{ .MenuItem.Name }}</h1>
+                    <div class="rating">
+                        <span>★ 4.7</span> <span>(27 отзывов)</span>
+                    </div>
+                    <p class="price">{{ printf "%.2f" .MenuItem.Price }} ₽</p>
+                    <p class="description">{{ if .MenuItem.Description.String }}{{ .MenuItem.Description.String }}{{ else }}Описание отсутствует{{ end }}</p>
+                    <div class="quantity-control">
+                        <button onclick="updateQuantity(-1)">−</button>
+                        <input type="text" id="quantity" value="1" readonly>
+                        <button onclick="updateQuantity(1)">+</button>
+                    </div>
+                    <button class="order-now-btn" data-item-id="{{ .MenuItem.ID }}">Заказать сейчас</button>
+                </div>
+            </section>
+
+            <!-- Рекомендованные блюда -->
+            <section class="recommended-dishes">
+                <h2>Рекомендованные блюда</h2>
+                <div class="dishes-grid" id="recommended-dishes">
+                    <!-- Блюда будут добавлены через JavaScript -->
+                </div>
+            </section>
+
+            <!-- Рейтинг и отзывы -->
+            <section class="rating-reviews">
+                <div class="rating-section">
+                    <h2>Рейтинг</h2>
+                    <div class="overall-rating">
+                        <span class="rating-value">4.7</span>
+                        <div class="stars">★★★★★</div>
+                    </div>
+                    <div class="rating-breakdown">
+                        <div class="rating-bar"><span>5</span><div class="bar"><div style="width: 70%;"></div></div></div>
+                        <div class="rating-bar"><span>4</span><div class="bar"><div style="width: 20%;"></div></div></div>
+                        <div class="rating-bar"><span>3</span><div class="bar"><div style="width: 5%;"></div></div></div>
+                        <div class="rating-bar"><span>2</span><div class="bar"><div style="width: 3%;"></div></div></div>
+                        <div class="rating-bar"><span>1</span><div class="bar"><div style="width: 2%;"></div></div></div>
+                    </div>
+                </div>
+                <div class="reviews-section">
+                    <h2>Отзывы</h2>
+                    <div id="reviews-list">
+                        <!-- Отзывы будут добавлены через JavaScript -->
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Подвал -->
+    <footer class="footer">
+        <div class="footer-section">
+            <h4>Свяжитесь с нами</h4>
+            <p>ул. Вкусная, 123, Город Еды, Россия</p>
+            <p>Телефон: (123) 456-7890</p>
+        </div>
+    </footer>
+
+    <script src="/static/js/product-details.js"></script>
+</body>
+</html>

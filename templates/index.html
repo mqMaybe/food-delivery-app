@@ -3,95 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Доставка Еды</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <meta name="csrf-token" content="{{ .CSRFToken }}">
+    <title>FoodieExpress - Открой мир вкусов</title>
+    <!-- Подключаем шрифт Poppins через Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Подключаем Font Awesome для иконок -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/navbar-index.css">
+    <link rel="stylesheet" href="/static/css/global.css">
+    <link rel="stylesheet" href="/static/css/hero.css">
+    <link rel="stylesheet" href="/static/css/landing.css">
+    <link rel="stylesheet" href="/static/css/footer.css">
 </head>
 <body>
     <div class="wrapper">
-        <!-- Навигационная панель -->
-        <nav class="navbar">
-            <a href="/" class="logo">🍽️ Доставка Еды</a>
-            <button class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></button>
-            <div class="nav-links" id="navLinks">
-                <a href="/" class="active">Главная</a>
-                <a href="/restaurants">Рестораны</a>
-                <a href="/profile">Настройки аккаунта</a>
+        <!-- Шапка -->
+        <header>
+            <div class="container">
+                <div class="logo">
+                    <h1>FoodieExpress</h1>
+                </div>
+                <nav>
+                    <a href="/login" class="btn btn-outline">Войти</a>
+                    <a href="/register" class="btn btn-primary">Зарегистрироваться</a>
+                </nav>
             </div>
-        </nav>
+        </header>
 
-        <!-- Поиск -->
+        <!-- Основной контент -->
         <div class="content">
-            <div class="search-bar">
-                <input type="text" placeholder="Поиск ресторанов или блюд">
-            </div>
-
-            <!-- Featured Restaurants -->
-            <section class="featured-restaurants">
-                <h2>Рекомендуемые рестораны</h2>
-                <div class="restaurant-grid">
-                    <div class="restaurant-card">
-                        <img src="/static/images/la-bella-italia.jpg" alt="La Bella Italia">
-                        <h3>La Bella Italia</h3>
-                        <p>Аутентичная итальянская кухня с современным подходом.</p>
-                    </div>
-                    <div class="restaurant-card">
-                        <img src="/static/images/sushi-world.jpg" alt="Sushi World">
-                        <h3>Sushi World</h3>
-                        <p>Свежие суши и роллы, приготовленные опытными шеф-поварами.</p>
-                    </div>
-                    <div class="restaurant-card">
-                        <img src="/static/images/chez-pierre.jpg" alt="Chez Pierre">
-                        <h3>Chez Pierre</h3>
-                        <p>Классические французские блюда в уютной атмосфере.</p>
+            <!-- Геройская секция -->
+            <section class="hero">
+                <div class="container">
+                    <div class="hero-content">
+                        <h2>Открой мир<br>вкусов с</h2>
+                        <h3 class="hero-subtitle">FoodieExpress</h3>
+                        <div class="search-bar">
+                            <span class="search-icon"><i class="fas fa-search"></i></span>
+                            <input type="text" placeholder="Найти рестораны" id="search-input">
+                            <button class="btn btn-primary" onclick="searchRestaurants()">Заказать</button>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Popular Dishes -->
-            <section class="popular-dishes">
-                <h2>Популярные блюда</h2>
-                <div class="dish-grid">
-                    <div class="dish-card">
-                        <img src="/static/images/margherita-pizza.jpg" alt="Пицца Маргарита">
-                        <h3>Пицца Маргарита</h3>
-                        <p>Классическая пицца с свежей моцареллой и базиликом.</p>
+            <!-- Секция "Как работает FoodieExpress" -->
+            <section class="how-it-works">
+                <div class="container">
+                    <h3>Как работает FoodieExpress</h3>
+                    <div class="steps">
+                        <div class="step">
+                            <div class="step-icon">
+                                <img src="https://assets.api.uizard.io/api/cdn/stream/6ab86e90-3120-456b-bfca-cccdab0b50d5.png" alt="Выберите ресторан">
+                            </div>
+                            <h4>Выберите ресторан</h4>
+                            <p>Изучите рестораны и откройте для себя новые кухни.</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-icon">
+                                <img src="https://assets.api.uizard.io/api/cdn/stream/8bfe323b-196f-4cc5-86db-aaa51ddce034.png" alt="Посмотрите меню">
+                            </div>
+                            <h4>Посмотрите меню</h4>
+                            <p>Изучите меню и выберите любимые блюда.</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-icon">
+                                <img src="https://assets.api.uizard.io/api/cdn/stream/619b52a9-bf45-4f94-a131-d216cb5ae70f.png" alt="Добавьте в корзину">
+                            </div>
+                            <h4>Добавьте в корзину</h4>
+                            <p>Добавьте заказ в корзину и оформите его легко.</p>
+                        </div>
                     </div>
-                    <div class="dish-card">
-                        <img src="/static/images/sushi-platter.jpg" alt="Ассорти суши">
-                        <h3>Ассорти суши</h3>
-                        <p>Разнообразие свежих суши, чтобы порадовать ваши вкусовые рецепторы.</p>
+                </div>
+            </section>
+
+            <!-- Секция "Присоединяйтесь к команде FoodieExpress" -->
+            <section class="join-team">
+                <div class="container">
+                    <h3>Присоединяйтесь к команде FoodieExpress</h3>
+                    <div class="team-roles">
+                        <div class="role">
+                            <div class="role-icon">
+                                <img src="https://assets.api.uizard.io/api/cdn/stream/83a3b09a-3963-4a9d-8737-284f0dcd66dd.png" alt="Курьер">
+                            </div>
+                            <h4>Курьер</h4>
+                            <p>Доставляйте заказы и радуйте клиентов.</p>
+                            <a href="/register?role=rider" class="btn btn-outline">Станьте курьером</a>
+                        </div>
+                        <div class="role">
+                            <div class="role-icon">
+                                <img src="https://assets.api.uizard.io/api/cdn/stream/36e946d0-e383-413a-8367-20aaa31d1625.png" alt="Партнёр-ресторатор">
+                            </div>
+                            <h4>Партнёр-ресторатор</h4>
+                            <p>Станьте партнёром и привлекайте больше клиентов.</p>
+                            <a href="/register?role=restaurant" class="btn btn-outline">Сотрудничайте с нами</a>
+                        </div>
                     </div>
-                    <div class="dish-card">
-                        <img src="/static/images/chocolate-lava-cake.jpg" alt="Шоколадный лавовый кекс">
-                        <h3>Шоколадный лавовый кекс</h3>
-                        <p>Нежный десерт с тающим шоколадным центром.</p>
+                </div>
+            </section>
+
+            <!-- Секция "Член команды" -->
+            <section class="team-member">
+                <div class="container">
+                    <div class="team-member-content">
+                        <img src="https://assets.api.uizard.io/api/cdn/stream/c0468a86-f2ee-42c1-a7ff-8399de07787a.png" alt="Член команды">
+                        <div class="team-member-text">
+                            <h3>Присоединяйтесь к нашей команде любителей еды</h3>
+                            <a href="/register" class="btn btn-primary">Присоединиться</a>
+                        </div>
                     </div>
+                </div>
+            </section>
+
+            <!-- Секция "Установите наше приложение" -->
+            <section class="install-app">
+                <div class="container">
+                    <div class="app-content">
+                        <h3>Установите наше приложение</h3>
+                        <p>Заказывайте с лёгкостью! Испытайте лучшую доставку еды.</p>
+                        <a href="#" class="btn btn-primary">Установить</a>
+                    </div>
+                    <img src="https://assets.api.uizard.io/api/cdn/stream/b2954d40-9690-44b6-8d1c-6e059d2882c9.png" alt="Установите приложение">
                 </div>
             </section>
         </div>
+
+        <!-- Футер -->
+        <footer>
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <h4>Свяжитесь с нами</h4>
+                        <p>ул. Вкусная, 123, Город Еды, Россия</p>
+                        <p>Телефон: (123) 456-7890</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
     </div>
 
-    <!-- Подвал -->
-    <footer class="footer">
-        <div class="footer-section">
-            <h4>Быстрые ссылки</h4>
-            <a href="/">Главная</a>
-            <a href="/contact">Свяжитесь с нами</a>
-            <a href="/privacy">Политика конфиденциальности</a>
-        </div>
-        <div class="footer-section">
-            <h4>Следите за нами</h4>
-            <a href="https://twitter.com"><i class="fab fa-twitter"></i></a>
-            <a href="https://instagram.com"><i class="fab fa-instagram"></i></a>
-        </div>
-    </footer>
-
-    <script>
-        function toggleMenu() {
-            const navLinks = document.getElementById('navLinks');
-            navLinks.classList.toggle('active');
-        }
-    </script>
+    <script src="/static/js/main.js"></script>
 </body>
 </html>

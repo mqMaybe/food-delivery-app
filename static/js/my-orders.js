@@ -11,14 +11,28 @@ function displayError(elementId, message) {
 // Функция для выхода из системы
 async function logout() {
     try {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        if (!csrfToken) {
+            throw new Error('CSRF-токен не найден');
+        }
+
         const response = await fetch('/api/logout', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken,
             },
         });
 
-        const data = await response.json();
+        const contentType = response.headers.get('Content-Type');
+        let data = {};
+        if (contentType && contentType.includes('application/json')) {
+            data = await response.json();
+        } else {
+            const text = await response.text();
+            console.error('Ответ сервера не является JSON:', text);
+        }
+
         if (!response.ok) {
             throw new Error(data.error || 'Не удалось выйти из системы');
         }
@@ -26,9 +40,10 @@ async function logout() {
         window.location.href = '/login';
     } catch (error) {
         console.error('Ошибка при выходе из системы:', error);
-        displayError('orderList', error.message);
+        displayError(error.message);
     }
 }
+
 
 // Загрузка заказов при загрузке страницы
 document.addEventListener('DOMContentLoaded', async () => {
@@ -68,12 +83,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <h5>Заказ #${order.id}</h5>
                     <p><strong>Адрес доставки:</strong> ${order.delivery_address}</p>
                     <p><strong>Статус:</strong> ${getStatusText(order.status)}</p>
-                    <p><strong>Итоговая сумма:</strong> $${order.total_price.toFixed(2)}</p>
+                    <p><strong>Итоговая сумма:</strong> ${order.total_price.toFixed(2)} рублей.</p>
                     <div class="order-items">
                         <p><strong>Товары:</strong></p>
                         <ul>
                             ${order.items.map(item => `
-                                <li>${item.quantity}x ${item.menu_name} - $${(item.menu_price * item.quantity).toFixed(2)}</li>
+                                <li>${item.quantity}x</li>
                             `).join('')}
                         </ul>
                     </div>
@@ -90,6 +105,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Функция для перевода статуса на русский
     function getStatusText(status) {
         switch (status) {
+            case 'pending':
+                return 'Не оплачен';
             case 'preparing':
                 return 'Готовится';
             case 'en_route':

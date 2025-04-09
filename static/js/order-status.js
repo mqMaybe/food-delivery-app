@@ -3,14 +3,28 @@
 // Функция для выхода из системы
 async function logout() {
     try {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        if (!csrfToken) {
+            throw new Error('CSRF-токен не найден');
+        }
+
         const response = await fetch('/api/logout', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken,
             },
         });
 
-        const data = await response.json();
+        const contentType = response.headers.get('Content-Type');
+        let data = {};
+        if (contentType && contentType.includes('application/json')) {
+            data = await response.json();
+        } else {
+            const text = await response.text();
+            console.error('Ответ сервера не является JSON:', text);
+        }
+
         if (!response.ok) {
             throw new Error(data.error || 'Не удалось выйти из системы');
         }
@@ -18,9 +32,10 @@ async function logout() {
         window.location.href = '/login';
     } catch (error) {
         console.error('Ошибка при выходе из системы:', error);
-        alert(error.message);
+        displayError(error.message);
     }
 }
+
 
 // Загрузка статуса заказа при загрузке страницы
 document.addEventListener('DOMContentLoaded', async () => {
@@ -47,12 +62,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         const response = await fetch(`/api/order/${orderId}`);
         console.log('Статус ответа:', response.status); // Отладка
 
-        // Проверяем Content-Type ответа
         const contentType = response.headers.get('Content-Type');
         console.log('Content-Type:', contentType); // Отладка
 
         if (!response.ok) {
-            // Проверяем тело ответа, даже если статус не 200
             const text = await response.text();
             console.log('Тело ответа (ошибка):', text); // Отладка
             let errorData;
@@ -75,21 +88,27 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
 
-        // Получаем время доставки из ресторана
+        // Получаем ресторан
         const restaurantResponse = await fetch(`/api/restaurants?cuisine_type=all&delivery_time=all&rating=all`);
         if (!restaurantResponse.ok) {
             const restaurantErrorText = await restaurantResponse.text();
-            console.log('Ошибка загрузки ресторанов:', restaurantErrorText); // Отладка
+            console.log('Ошибка загрузки ресторанов:', restaurantErrorText);
             throw new Error('Не удалось загрузить данные ресторана');
         }
 
-        const restaurants = await restaurantResponse.json();
-        console.log('Рестораны:', restaurants); // Отладка
+        const data = await restaurantResponse.json();
+        const restaurants = data.restaurants || data;
+
+        console.log('Рестораны:', restaurants);
+        if (!Array.isArray(restaurants)) {
+            throw new Error('Неверный формат данных ресторана: ожидается массив');
+        }
+
         const restaurant = restaurants.find(r => r.id === order.restaurant_id);
         if (restaurant && restaurant.delivery_time) {
-            deliveryTime.textContent = `${restaurant.delivery_time} мин`;
+            deliveryTime.textContent = `Время: ${restaurant.delivery_time} мин`;
         } else {
-            deliveryTime.textContent = 'Не указано';
+            deliveryTime.textContent = 'Время: не указано';
         }
     } catch (error) {
         console.error('Ошибка при загрузке статуса заказа:', error);

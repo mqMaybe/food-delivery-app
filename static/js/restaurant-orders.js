@@ -1,6 +1,54 @@
+// static/js/restaurant-orders.js
+
+// Функция для отображения ошибки
+function displayError(elementId, message) {
+    const element = document.getElementById(elementId);
+    if (element) {
+        element.innerHTML = `<p class="text-danger">${message}</p>`;
+        element.style.display = 'block';
+    } else {
+        console.error(`Element with ID ${elementId} not found`);
+    }
+}
+
+// Функция для выхода из системы
+async function logout() {
+    try {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        if (!csrfToken) {
+            throw new Error('CSRF-токен не найден');
+        }
+
+        const response = await fetch('/api/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken,
+            },
+        });
+
+        const contentType = response.headers.get('Content-Type');
+        let data = {};
+        if (contentType && contentType.includes('application/json')) {
+            data = await response.json();
+        } else {
+            const text = await response.text();
+            console.error('Ответ сервера не является JSON:', text);
+            throw new Error('Ответ сервера не является JSON');
+        }
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Не удалось выйти из системы');
+        }
+
+        window.location.href = '/login';
+    } catch (error) {
+        console.error('Ошибка при выходе из системы:', error);
+        displayError('restaurantOrdersList', error.message);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
-    const session = await checkAuth('restaurant');
-    if (!session) return;
 
     const loadOrdersBtn = document.getElementById('loadRestaurantOrdersBtn');
     const restaurantIdInput = document.getElementById('restaurantIdOrders');
@@ -34,14 +82,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             ordersList.innerHTML = '';
             orders.forEach(order => {
                 const div = document.createElement('div');
-                let itemsHtml = order.items.map(item => `
-                    <li>${item.menu_name} - ${item.menu_price} ₽ x ${item.quantity}</li>
-                `).join('');
+                div.className = 'order-item';
+                // Проверяем, есть ли order.items, и если нет — показываем пустой список
+                const itemsHtml = (order.items && Array.isArray(order.items))
+                    ? order.items.map(item => `
+                        <li>${item.menu_name} - ${item.menu_price} ₽ x ${item.quantity}</li>
+                    `).join('')
+                    : '<li>Элементы заказа отсутствуют.</li>';
                 div.innerHTML = `
                     <p>Заказ #${order.id} | Статус: ${order.status}</p>
                     <p>Адрес доставки: ${order.delivery_address}</p>
                     <p>Итого: ${order.total_price} ₽</p>
-                    <ul>${itemsHtml}</ul>
                     <select onchange="updateOrderStatus(${order.id}, ${restaurantId}, this.value)">
                         <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>В ожидании</option>
                         <option value="preparing" ${order.status === 'preparing' ? 'selected' : ''}>Готовится</option>
@@ -59,10 +110,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function updateOrderStatus(orderId, restaurantId, status) {
     try {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        if (!csrfToken) {
+            throw new Error('CSRF-токен не найден');
+        }
+
         const response = await fetch('/api/restaurant/orders', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken,
             },
             body: JSON.stringify({ order_id: orderId, restaurant_id: restaurantId, status }),
         });
@@ -72,9 +129,25 @@ async function updateOrderStatus(orderId, restaurantId, status) {
             throw new Error(errorData.error || 'Не удалось обновить статус заказа');
         }
 
-        alert('Статус заказа обновлён!');
+        showToast('Статус заказа обновлён!');
     } catch (error) {
         console.error('Failed to update order status:', error);
         displayError('restaurantOrdersList', error.message);
     }
+}
+
+function showToast(message, isError = false) {
+    const toast = document.createElement('div');
+    toast.className = `toast ${isError ? 'error' : ''}`;
+    toast.textContent = message;
+    document.getElementById('toastContainer').appendChild(toast);
+
+    setTimeout(() => {
+        toast.classList.add('show');
+    }, 100);
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
 }

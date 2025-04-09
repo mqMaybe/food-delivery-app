@@ -1,0 +1,262 @@
+/* static/css/auth-page.css */
+
+/* Контейнер для формы (общий для логина и регистрации) */
+.register-container,
+.login-container {
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Заголовок */
+.register-container h2,
+.login-container h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2d2d2d;
+    text-align: center;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* Сообщение об ошибке */
+.error-message {
+    color: #ff4d4d;
+    font-size: 0.9rem;
+    text-align: center;
+    margin-bottom: 20px;
+    display: none;
+}
+
+/* Форма */
+#registerForm,
+#loginForm {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Поля формы */
+.mb-3 {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.form-label {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #333;
+}
+
+.form-control,
+.form-select {
+    width: 100%;
+    padding: 12px 0px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    color: #333;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+    outline: none;
+    border-color: #ff4d4d;
+    box-shadow: 0 0 8px rgba(255, 77, 77, 0.2);
+}
+
+.form-control::placeholder {
+    color: #999;
+}
+
+/* Стили для select */
+.form-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="black" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+}
+
+/* Кнопка */
+.btn-primary {
+    background-color: #ff4d4d;
+    border: none;
+    padding: 12px;
+    color: white;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-primary:hover {
+    background-color: #e04343;
+}
+
+.btn-primary:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Текст и ссылка */
+.text-center {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.text-center a {
+    color: #ff4d4d;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.text-center a:hover {
+    text-decoration: underline;
+}
+
+/* Toast-уведомления */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.toast {
+    background-color: #333;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    font-size: 0.95rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.toast.show {
+    opacity: 1;
+}
+
+/* Анимация для формы */
+.register-container,
+.login-container {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .register-container,
+    .login-container {
+        margin: 30px 20px;
+        padding: 20px;
+    }
+
+    .register-container h2,
+    .login-container h2 {
+        font-size: 1.8rem;
+    }
+
+    .form-label {
+        font-size: 0.9rem;
+    }
+
+    .form-control,
+    .form-select {
+        padding: 8px 12px;
+        font-size: 0.95rem;
+    }
+
+    .btn-primary {
+        padding: 10px;
+        font-size: 0.95rem;
+    }
+
+    .text-center {
+        font-size: 0.95rem;
+    }
+
+    .toast-container {
+        top: 15px;
+        right: 15px;
+    }
+
+    .toast {
+        padding: 12px 15px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .register-container,
+    .login-container {
+        margin: 20px 15px;
+        padding: 15px;
+    }
+
+    .register-container h2,
+    .login-container h2 {
+        font-size: 1.5rem;
+    }
+
+    .form-label {
+        font-size: 0.85rem;
+    }
+
+    .form-control,
+    .form-select {
+        padding: 6px 10px;
+        font-size: 0.9rem;
+    }
+
+    .btn-primary {
+        padding: 8px;
+        font-size: 0.9rem;
+    }
+
+    .text-center {
+        font-size: 0.9rem;
+    }
+
+    .toast-container {
+        top: 10px;
+        right: 10px;
+        width: 90%;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .toast {
+        padding: 10px 12px;
+        font-size: 0.85rem;
+    }
+}

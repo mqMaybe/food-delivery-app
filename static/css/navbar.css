@@ -1,0 +1,102 @@
+/* Стили для навигации */
+.navbar {
+    background-color: #fff;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .navbar .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ff4d4d;
+    text-decoration: none;
+  }
+  
+  .nav-links a {
+    padding: 8px 12px;
+    margin: 0 5px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #000;
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  
+  .nav-links a:hover {
+    color: #ff4d4d;
+  }
+  
+  .nav-links a.active {
+    color: #ff4d4d;
+    font-weight: bold;
+  }
+  
+  /* Адаптивность навигации */
+  .navbar .menu-toggle {
+    display: none;
+    font-size: 1.5rem;
+    background: none;
+    border: none;
+    color: #333;
+    cursor: pointer;
+  }
+  
+  .nav-links {
+    display: flex;
+  }
+  
+  @media (max-width: 768px) {
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        text-align: center;
+        position: absolute;
+        top: 50px;
+        left: 0;
+        background-color: #fff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .nav-links.active {
+        display: flex;
+    }
+    .nav-links a {
+        margin: 5px 0;
+    }
+    .navbar {
+        position: relative;
+    }
+    .navbar .menu-toggle {
+        display: block;
+    }
+  }
+  
+  /* Стили для шапки лендинга */
+  header {
+    padding: 20px 0;
+    position: absolute;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    background: transparent;
+  }
+  
+  header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .logo h1 {
+    font-size: 24px;
+    font-weight: 700;
+    color: white;
+  }
+  
+  nav .btn {
+    margin-left: 15px;
+  }

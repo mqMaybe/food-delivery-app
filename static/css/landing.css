@@ -1,0 +1,201 @@
+/* landing.css */
+
+/* Секция "Как работает FoodieExpress" */
+.how-it-works {
+  padding: 50px 0;
+  text-align: center;
+  margin: 0;
+}
+
+.how-it-works h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 40px;
+}
+
+.steps {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.step {
+  flex: 1;
+  text-align: center;
+}
+
+.step-icon img {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 20px;
+}
+
+.step h4 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.step p {
+  font-size: 0.95rem;
+  color: #666;
+}
+
+/* Секция "Присоединяйтесь к команде" */
+.join-team {
+  padding: 50px 0;
+  background-color: #f8f9fa;
+  text-align: center;
+  margin: 0;
+}
+
+.join-team h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 40px;
+}
+
+.team-roles {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+}
+
+.role {
+  flex: 1;
+  max-width: 300px;
+  text-align: center;
+}
+
+.role-icon img {
+  width: 150px;
+  height: 150px;
+  margin-bottom: 20px;
+}
+
+.role h4 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.role p {
+  font-size: 0.95rem;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+/* Секция "Член команды" */
+.team-member {
+  padding: 50px 0;
+  text-align: center;
+  margin: 0;
+}
+
+.team-member-content {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.team-member-content img {
+  width: 400px;
+  height: 300px;
+}
+
+.team-member-text h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+/* Секция "Установите приложение" */
+.install-app {
+  padding: 50px 0;
+  background-color: #f8f9fa;
+  text-align: center;
+  margin: 0;
+}
+
+.install-app .container {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.app-content {
+  flex: 1;
+  text-align: left;
+}
+
+.app-content h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.app-content p {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.install-app img {
+  width: 400px;
+  height: 300px;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .steps {
+      flex-direction: column;
+      gap: 30px;
+  }
+
+  .team-roles {
+      flex-direction: column;
+      gap: 40px;
+  }
+
+  .team-member-content {
+      flex-direction: column;
+  }
+
+  .team-member-content img {
+      width: 100%;
+      max-width: 400px;
+  }
+
+  .install-app .container {
+      flex-direction: column;
+  }
+
+  .install-app img {
+      width: 100%;
+      max-width: 400px;
+  }
+
+  .app-content {
+      text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .how-it-works h3,
+  .join-team h3,
+  .team-member-text h3,
+  .app-content h3 {
+      font-size: 1.5rem;
+  }
+
+  .step h4,
+  .role h4 {
+      font-size: 1.1rem;
+  }
+
+  .step p,
+  .role p,
+  .app-content p {
+      font-size: 0.9rem;
+  }
+}

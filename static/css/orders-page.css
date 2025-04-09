@@ -1,0 +1,230 @@
+/* static/css/orders-page.css */
+
+/* Основной контейнер */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+/* Заголовок */
+h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2d2d2d;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+h2 i {
+    color: #ff4d4d;
+    margin-right: 10px;
+}
+
+/* Форма для ввода ID ресторана */
+#restaurantIdOrders {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    color: #333;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    width: 200px;
+    margin-right: 15px;
+}
+
+#restaurantIdOrders:focus {
+    outline: none;
+    border-color: #ff4d4d;
+    box-shadow: 0 0 8px rgba(255, 77, 77, 0.2);
+}
+
+/* Кнопка загрузки заказов */
+#loadRestaurantOrdersBtn {
+    background-color: #ff4d4d;
+    border: none;
+    padding: 10px 20px;
+    color: white;
+    border-radius: 5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+
+#loadRestaurantOrdersBtn i {
+    margin-right: 8px;
+}
+
+#loadRestaurantOrdersBtn:hover {
+    background-color: #e04343;
+}
+
+/* Контейнер для списка заказов */
+#restaurantOrdersList {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Стили для каждого заказа */
+.order-item {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.order-item p {
+    font-size: 1rem;
+    color: #333;
+    margin: 0;
+    flex: 1;
+}
+
+.order-item select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 0.95rem;
+    color: #333;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease;
+}
+
+.order-item select:focus {
+    outline: none;
+    border-color: #ff4d4d;
+}
+
+.order-item button {
+    background-color: #ff4d4d;
+    border: none;
+    padding: 8px 15px;
+    color: white;
+    border-radius: 5px;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+
+.order-item button:hover {
+    background-color: #e04343;
+}
+
+/* Сообщение об ошибке */
+.text-danger {
+    color: #ff4d4d;
+    font-size: 0.9rem;
+    text-align: center;
+    margin-bottom: 20px;
+    display: none;
+}
+
+/* Контейнер для уведомлений (toast) */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.toast {
+    background-color: #ff4d4d;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    font-size: 0.9rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.toast.show {
+    opacity: 1;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .container {
+        padding: 30px 15px;
+    }
+
+    h2 {
+        font-size: 1.8rem;
+    }
+
+    #restaurantIdOrders {
+        width: 100%;
+        max-width: 300px;
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+
+    #loadRestaurantOrdersBtn {
+        width: 100%;
+        max-width: 300px;
+        padding: 10px;
+    }
+
+    .order-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .order-item p {
+        font-size: 0.95rem;
+    }
+
+    .order-item select,
+    .order-item button {
+        width: 100%;
+        padding: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 20px 10px;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    #restaurantIdOrders {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+    }
+
+    #loadRestaurantOrdersBtn {
+        padding: 8px 15px;
+        font-size: 0.9rem;
+    }
+
+    .order-item p {
+        font-size: 0.9rem;
+    }
+
+    .order-item select,
+    .order-item button {
+        padding: 8px;
+        font-size: 0.9rem;
+    }
+
+    .toast {
+        font-size: 0.85rem;
+        padding: 8px 15px;
+    }
+}

@@ -11,14 +11,31 @@ function displayError(elementId, message) {
 // Функция для выхода из системы
 async function logout() {
     try {
+        // Извлекаем CSRF-токен из метаданных
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        if (!csrfToken) {
+            throw new Error('CSRF-токен не найден');
+        }
+
         const response = await fetch('/api/logout', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken, // Передаём CSRF-токен в заголовке
             },
         });
 
-        const data = await response.json();
+        // Проверяем Content-Type ответа
+        const contentType = response.headers.get('Content-Type');
+        let data = {};
+        if (contentType && contentType.includes('application/json')) {
+            data = await response.json();
+        } else {
+            // Если ответ не JSON, читаем как текст для отладки
+            const text = await response.text();
+            console.error('Ответ сервера не является JSON:', text);
+        }
+
         if (!response.ok) {
             throw new Error(data.error || 'Не удалось выйти из системы');
         }
@@ -68,11 +85,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 throw new Error(errorData.error || 'Не удалось загрузить рестораны');
             }
 
-            const restaurants = await response.json();
+            const data = await response.json();
+            const restaurants = data.restaurants; // Извлекаем массив из объекта
             console.log('Рестораны:', restaurants); // Отладка
 
             restaurantList.innerHTML = ''; // Очищаем список
-            if (restaurants.length === 0) {
+            if (!restaurants || restaurants.length === 0) {
                 restaurantList.innerHTML = '<p>Рестораны не найдены.</p>';
                 return;
             }
@@ -84,6 +102,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <div class="restaurant-card">
                         <img src="/static/images/restaurant-placeholder.jpg" alt="${restaurant.name}" class="restaurant-image">
                         <div class="restaurant-name">${restaurant.name}</div>
+                        <div class="restaurant-info">Тип кухни: ${restaurant.cuisine_type.String || 'Не указан'}</div>
+                        <div class="restaurant-info">Время доставки: ${restaurant.delivery_time.Valid ? restaurant.delivery_time.Int32 + ' мин' : 'Не указано'}</div>
                         <div class="restaurant-rating">Рейтинг: ${restaurant.rating.toFixed(1)}</div>
                         <a href="/menu?restaurant_id=${restaurant.id}" class="btn view-details-btn">Подробнее</a>
                     </div>

@@ -1,33 +1,60 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Управление меню - Доставка Еды</title>
-  <link rel="stylesheet" href="/static/css/style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ .CSRFToken }}">
+    <title>Управление меню - FoodieExpress</title>
+    <link rel="stylesheet" href="/static/css/global.css">
+    <link rel="stylesheet" href="/static/css/navbar.css">
+    <link rel="stylesheet" href="/static/css/manage-menu.css">
+    <link rel="stylesheet" href="/static/css/footer.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <nav class="navbar">
-    <a href="/" class="logo">Доставка Еды</a>
-    <div class="nav-links" id="navLinks">
-      <a href="/restaurant-orders">Заказы</a>
-      <a href="/add-menu">Добавить блюдо</a>
-      <a href="/manage-menu">Управление меню</a>
-      <a href="/profile">Профиль</a>
-      <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Выйти</a>
+    <div class="wrapper">
+        <!-- Навигационная панель -->
+        <nav class="navbar">
+            <a href="/" class="logo">🍽️ FoodieExpress</a>
+            <button class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></button>
+            <div class="nav-links" id="navLinks">
+                <a href="/restaurant-orders" class="active">Заказы</a>
+                <a href="/add-menu">Добавить блюдо</a>
+                <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Выйти</a>
+            </div>
+        </nav>
+
+        <!-- Основной контент -->
+        <div class="content">
+            <section class="manage-menu">
+                <h2>Управление меню</h2>
+                <div class="manage-menu-form">
+                    <label for="manageRestaurantId">ID ресторана:</label>
+                    <input type="text" id="manageRestaurantId" placeholder="Введите ID ресторана">
+                    <button id="loadMenuBtn">Загрузить меню</button>
+                </div>
+                <div id="manageMenuList" class="menu-list">
+                    <!-- Список блюд будет добавлен через JavaScript -->
+                </div>
+            </section>
+        </div>
     </div>
-  </nav>
 
-  <div class="container">
-    <h2><i class="fas fa-utensils"></i> Управление меню</h2>
-    <input id="manageRestaurantId" type="number" placeholder="ID ресторана">
-    <button id="loadMenuBtn"><i class="fas fa-sync-alt"></i> Загрузить меню</button>
-    <div id="manageMenuList"></div>
-  </div>
+    <!-- Подвал -->
+    <footer class="footer">
+        <div class="footer-section">
+            <h4>Свяжитесь с нами</h4>
+            <p>ул. Вкусная, 123, Город Еды, Россия</p>
+            <p>Телефон: (123) 456-7890</p>
+        </div>
+    </footer>
 
-  <div id="toastContainer" class="toast-container"></div>
-  <script src="/static/js/main.js"></script>
-  <script src="/static/js/manage-menu.js"></script>
+    <script src="/static/js/manage-menu.js"></script>
+    <script>
+        function toggleMenu() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.toggle('active');
+        }
+    </script>
 </body>
 </html>

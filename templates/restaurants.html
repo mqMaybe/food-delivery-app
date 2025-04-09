@@ -3,21 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Рестораны - Доставка Еды</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <meta name="csrf-token" content="{{ .CSRFToken }}">
+    <title>Рестораны</title>
+    <link rel="stylesheet" href="/static/css/global.css">
+    <link rel="stylesheet" href="/static/css/navbar.css">
+    <link rel="stylesheet" href="/static/css/restaurants-page.css">
+    <link rel="stylesheet" href="/static/css/footer.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="wrapper">
         <!-- Навигационная панель -->
         <nav class="navbar">
-            <a href="/" class="logo">Доставка Еды</a>
+            <a href="/" class="logo">FoodieExpress</a>
             <button class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></button>
             <div class="nav-links" id="navLinks">
                 <a href="/">Главная</a>
-                <a href="/restaurants" class="active">Рестораны</a>
-                <a href="/menu">Меню</a>
                 <a href="/cart">Корзина</a>
+                <a href="/my-orders">Мои заказы</a>
+                <a href="/order-status/:id">Статус заказа</a>
                 <a href="/my-orders">Мои заказы</a>
                 <a href="/profile">Профиль</a>
                 <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Выйти</a>
@@ -25,18 +29,18 @@
         </nav>
 
         <!-- Фильтры -->
-        <div class="content container filter-section">
-            <div class="row">
-                <div class="col-md-3">
+        <div class="content">
+            <div class="filters-container">
+                <div class="filter-section">
                     <label for="cuisineType">Тип кухни</label>
                     <select id="cuisineType">
                         <option value="all">ВСЕ</option>
-                        <option value="italian">Итальянская</option>
-                        <option value="chinese">Китайская</option>
-                        <option value="indian">Индийская</option>
+                        <option value="итальянская">Итальянская</option>
+                        <option value="японская">Японская</option>
+                        <option value="русская">Русская</option>
                     </select>
                 </div>
-                <div class="col-md-3">
+                <div class="filter-section">
                     <label for="deliveryTime">Время доставки</label>
                     <select id="deliveryTime">
                         <option value="all">ВСЕ</option>
@@ -44,7 +48,7 @@
                         <option value="60">Менее 60 минут</option>
                     </select>
                 </div>
-                <div class="col-md-3">
+                <div class="filter-section">
                     <label for="rating">Минимальный рейтинг</label>
                     <select id="rating">
                         <option value="all">ВСЕ</option>
@@ -54,34 +58,23 @@
                     </select>
                 </div>
             </div>
-        </div>
 
-        <!-- Список ресторанов -->
-        <div class="container">
-            <div class="row" id="restaurantList">
-                <!-- Рестораны будут добавлены через JavaScript -->
-            </div>
+            <!-- Список ресторанов -->
+            <section class="restaurants">
+                <h2>Рестораны</h2>
+                <div class="restaurant-grid" id="restaurantList">
+                    <!-- Рестораны будут добавлены через JavaScript -->
+                </div>
+            </section>
         </div>
     </div>
 
     <!-- Подвал -->
     <footer class="footer">
         <div class="footer-section">
-            <h4>Быстрые ссылки</h4>
-            <a href="/about">О нас</a>
-            <a href="/faq">Часто задаваемые вопросы</a>
-            <a href="/terms">Условия использования</a>
-        </div>
-        <div class="footer-section">
             <h4>Свяжитесь с нами</h4>
             <p>ул. Вкусная, 123, Город Еды, Россия</p>
             <p>Телефон: (123) 456-7890</p>
-        </div>
-        <div class="footer-section">
-            <h4>Следите за нами</h4>
-            <a href="#"><i class="fab fa-vk"></i></a>
-            <a href="#"><i class="fab fa-telegram"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
         </div>
     </footer>
 

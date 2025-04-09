@@ -1,0 +1,110 @@
+/* hero.css */
+
+.hero {
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://assets.api.uizard.io/api/cdn/stream/b79870f5-3082-4608-a296-29b252f3d6d0.png') center/cover no-repeat;
+  height: calc(70vh - 70px);
+  width: 100%;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: rgb(255, 255, 255);
+}
+
+.hero-content {
+  animation: fadeInUp 1s ease-out;
+}
+
+.hero-content h2 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.hero-subtitle {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: #ff4d4d;
+  margin-bottom: 20px;
+}
+
+.search-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  max-width: 500px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.search-bar input {
+  flex-grow: 1;
+  padding: 10px 15px 10px 40px;
+  border: none;
+  border-radius: 25px;
+  font-size: 1rem;
+}
+
+.search-bar .search-icon {
+  position: absolute;
+  left: 15px;
+  color: #777;
+}
+
+/* Анимация */
+@keyframes fadeInUp {
+  from {
+      opacity: 0;
+      transform: translateY(20px);
+  }
+  to {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .hero {
+      height: 80vh;
+      padding: 20px;
+  }
+
+  .hero-content h2 {
+      font-size: 2.5rem;
+  }
+
+  .hero-subtitle {
+      font-size: 2rem;
+  }
+
+  .search-bar {
+      flex-direction: column;
+      gap: 15px;
+  }
+
+  .search-bar input {
+      width: 100%;
+      padding: 10px 15px;
+  }
+
+  .search-bar .search-icon {
+      display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+      height: 70vh;
+      padding: 15px;
+  }
+
+  .hero-content h2 {
+      font-size: 2rem;
+  }
+
+  .hero-subtitle {
+      font-size: 1.5rem;
+  }
+}
