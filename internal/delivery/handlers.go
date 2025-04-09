@@ -633,6 +633,7 @@ func (app *App) AddMenuItem(c *gin.Context) {
 // UpdateMenuItem обновляет информацию о блюде
 func (app *App) UpdateMenuItem(c *gin.Context) {
 	userID, _ := c.Get("user_id")
+	log.Printf("UserID: %v", userID)
 
 	var input struct {
 		MenuID       int     `json:"menu_id"`
@@ -642,23 +643,32 @@ func (app *App) UpdateMenuItem(c *gin.Context) {
 		Description  string  `json:"description"`
 	}
 	if err := c.ShouldBindJSON(&input); err != nil {
+		log.Printf("Ошибка при парсинге JSON: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Неверный формат данных"})
 		return
 	}
+	log.Printf("Input: MenuID=%d, RestaurantID=%d", input.MenuID, input.RestaurantID)
 
 	var restaurantUserID int
 	err := app.DB.QueryRow("SELECT id FROM restaurants WHERE id = $1 AND user_id = $2",
 		input.RestaurantID, userID).Scan(&restaurantUserID)
 	if err != nil {
-		c.JSON(http.StatusForbidden, gin.H{"error": "У вас нет прав для редактирования этого блюда"})
+		if err == sql.ErrNoRows {
+			log.Printf("Ресторан с ID=%d не принадлежит пользователю с ID=%v", input.RestaurantID, userID)
+			c.JSON(http.StatusForbidden, gin.H{"error": "У вас нет прав для редактирования этого блюда"})
+		} else {
+			log.Printf("Ошибка при проверке прав: %v", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Ошибка при проверке прав"})
+		}
 		return
 	}
 
 	_, err = app.DB.Exec(`
-		UPDATE menu SET name = $1, price = $2, description = $3
-		WHERE id = $4 AND restaurant_id = $5`,
+        UPDATE menu SET name = $1, price = $2, description = $3
+        WHERE id = $4 AND restaurant_id = $5`,
 		input.Name, input.Price, input.Description, input.MenuID, input.RestaurantID)
 	if err != nil {
+		log.Printf("Ошибка при обновлении блюда: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Не удалось обновить блюдо"})
 		return
 	}
@@ -669,27 +679,37 @@ func (app *App) UpdateMenuItem(c *gin.Context) {
 // DeleteMenuItem удаляет блюдо из меню ресторана
 func (app *App) DeleteMenuItem(c *gin.Context) {
 	userID, _ := c.Get("user_id")
+	log.Printf("UserID: %v", userID)
 
 	var input struct {
 		MenuID       int `json:"menu_id"`
 		RestaurantID int `json:"restaurant_id"`
 	}
 	if err := c.ShouldBindJSON(&input); err != nil {
+		log.Printf("Ошибка при парсинге JSON: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Неверный формат данных"})
 		return
 	}
+	log.Printf("Input: MenuID=%d, RestaurantID=%d", input.MenuID, input.RestaurantID)
 
 	var restaurantUserID int
 	err := app.DB.QueryRow("SELECT id FROM restaurants WHERE id = $1 AND user_id = $2",
 		input.RestaurantID, userID).Scan(&restaurantUserID)
 	if err != nil {
-		c.JSON(http.StatusForbidden, gin.H{"error": "У вас нет прав для удаления этого блюда"})
+		if err == sql.ErrNoRows {
+			log.Printf("Ресторан с ID=%d не принадлежит пользователю с ID=%v", input.RestaurantID, userID)
+			c.JSON(http.StatusForbidden, gin.H{"error": "У вас нет прав для удаления этого блюда"})
+		} else {
+			log.Printf("Ошибка при проверке прав: %v", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Ошибка при проверке прав"})
+		}
 		return
 	}
 
 	_, err = app.DB.Exec("DELETE FROM menu WHERE id = $1 AND restaurant_id = $2",
 		input.MenuID, input.RestaurantID)
 	if err != nil {
+		log.Printf("Ошибка при удалении блюда: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Не удалось удалить блюдо"})
 		return
 	}
@@ -904,6 +924,13 @@ func (app *App) Checkout(c *gin.Context) {
 			return
 		}
 	}
+
+	// Очистка корзины пользователя после успешного оформления заказа
+	_, err = app.DB.Exec(`DELETE FROM cart WHERE user_id = $1`, userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Не удалось очистить корзину"})
+		return
+	}
 }
 
 // GetUserRestaurants возвращает рестораны, привязанные к текущему пользователю
@@ -965,6 +992,7 @@ func (app *App) UpdateOrderStatus(c *gin.Context) {
 	}
 
 	validStatuses := map[string]bool{
+		"pending":   true,
 		"preparing": true,
 		"en_route":  true,
 		"delivered": true,

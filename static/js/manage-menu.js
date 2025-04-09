@@ -162,13 +162,19 @@ async function deleteMenuItem(id, restaurantId) {
             throw new Error('CSRF-токен не найден');
         }
 
+        const payload = {
+            menu_id: id,
+            restaurant_id: restaurantId,
+        };
+        console.log('Отправляемый JSON:', JSON.stringify(payload));
+
         const response = await fetch('/api/menu', {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRF-Token': csrfToken,
             },
-            body: JSON.stringify({ menu_id: id, restaurant_id: restaurantId }),
+            body: JSON.stringify(payload),
         });
 
         if (!response.ok) {
