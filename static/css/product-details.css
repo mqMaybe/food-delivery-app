@@ -287,3 +287,66 @@
     color: #666;
     margin: 5px 0;
 }
+
+@media (max-width: 768px) {
+    .product-details {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .main-image img {
+        width: 100%;
+        height: auto;
+    }
+
+    .thumbnail-images {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .thumbnail-images img {
+        width: 80px;
+        height: 80px;
+    }
+
+    .product-info h1 {
+        font-size: 1.5rem;
+        text-align: center;
+    }
+
+    .rating {
+        justify-content: center;
+    }
+
+    .price,
+    .description,
+    .quantity-control,
+    .order-now-btn {
+        text-align: center;
+        width: 100%;
+    }
+
+    .quantity-control {
+        flex-direction: column;
+    }
+
+    .order-now-btn {
+        width: 100%;
+    }
+
+    .dishes-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+
+    .rating-reviews {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .footer-content {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 20px;
+    }
+}
