@@ -55,7 +55,11 @@
                         <input type="text" id="quantity" value="1" readonly>
                         <button onclick="updateQuantity(1)">+</button>
                     </div>
-                    <button class="order-now-btn" data-item-id="{{ .MenuItem.ID }}">Заказать сейчас</button>
+                    <button class="order-now-btn"
+                        data-item-id="{{ .MenuItem.ID }}"
+                        data-restaurant-id="{{ .MenuItem.RestaurantID }}">
+                        Заказать сейчас
+                    </button>
                 </div>
             </section>
 
