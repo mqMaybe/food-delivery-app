@@ -182,8 +182,9 @@ func (app *App) AddToCart(c *gin.Context) {
 	c.Request.Body = io.NopCloser(bytes.NewBuffer(body))
 
 	var input struct {
-		MenuItemID int `json:"menu_item_id"`
-		Quantity   int `json:"quantity"`
+		MenuItemID   int `json:"menu_item_id"`
+		Quantity     int `json:"quantity"`
+		RestaurantID int `json:"restaurant_id"` // Добавляем поле
 	}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -192,13 +193,14 @@ func (app *App) AddToCart(c *gin.Context) {
 		return
 	}
 
-	log.Printf("Распарсенные данные: MenuItemID=%d, Quantity=%d", input.MenuItemID, input.Quantity)
+	log.Printf("Распарсенные данные: MenuItemID=%d, Quantity=%d, RestaurantID=%d", input.MenuItemID, input.Quantity, input.RestaurantID)
 
-	if input.MenuItemID <= 0 || input.Quantity <= 0 {
-		c.JSON(400, gin.H{"error": "Неверный ID блюда или количество"})
+	if input.MenuItemID <= 0 || input.Quantity <= 0 || input.RestaurantID <= 0 {
+		c.JSON(400, gin.H{"error": "Неверный ID блюда, количество или ID ресторана"})
 		return
 	}
 
+	// Проверяем существование блюда
 	var menuItem models.MenuItem
 	err = app.DB.Get(&menuItem, `
         SELECT id, restaurant_id, price
@@ -216,17 +218,24 @@ func (app *App) AddToCart(c *gin.Context) {
 	}
 	log.Printf("MenuItem: ID=%d, RestaurantID=%d", menuItem.ID, menuItem.RestaurantID)
 
+	// Проверяем, что блюдо принадлежит указанному ресторану
+	if menuItem.RestaurantID != input.RestaurantID {
+		log.Printf("Блюдо с ID=%d принадлежит ресторану с ID=%d, но передан restaurant_id=%d", menuItem.ID, menuItem.RestaurantID, input.RestaurantID)
+		c.JSON(400, gin.H{"error": "Блюдо не принадлежит указанному ресторану"})
+		return
+	}
+
 	// Проверяем, существует ли ресторан
 	var restaurantID int
 	err = app.DB.Get(&restaurantID, `
         SELECT id
         FROM restaurants
         WHERE id = $1
-    `, menuItem.RestaurantID)
+    `, input.RestaurantID)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			log.Printf("Ресторан с ID=%d не найден", menuItem.RestaurantID)
-			c.JSON(400, gin.H{"error": "Ресторан, связанный с блюдом, не найден"})
+			log.Printf("Ресторан с ID=%d не найден", input.RestaurantID)
+			c.JSON(400, gin.H{"error": "Ресторан не найден"})
 		} else {
 			log.Printf("Ошибка при проверке ресторана: %v", err)
 			c.JSON(500, gin.H{"error": "Ошибка при проверке ресторана"})
@@ -234,6 +243,7 @@ func (app *App) AddToCart(c *gin.Context) {
 		return
 	}
 
+	// Проверяем, есть ли уже этот товар в корзине
 	var existingItem struct {
 		ID       int `db:"id"`
 		Quantity int `db:"quantity"`
@@ -251,16 +261,18 @@ func (app *App) AddToCart(c *gin.Context) {
 	}
 
 	if err == sql.ErrNoRows {
+		// Добавляем новый товар в корзину
 		_, err = app.DB.Exec(`
-            INSERT INTO cart (user_id, menu_item_id, quantity, created_at)
-            VALUES ($1, $2, $3, NOW())
-        `, userID, input.MenuItemID, input.Quantity)
+            INSERT INTO cart (user_id, menu_item_id, quantity, created_at, restaurant_id)
+            VALUES ($1, $2, $3, NOW(), $4)
+        `, userID, input.MenuItemID, input.Quantity, input.RestaurantID)
 		if err != nil {
 			log.Printf("Ошибка при добавлении товара в корзину (INSERT): %v", err)
 			c.JSON(500, gin.H{"error": "Не удалось обновить корзину"})
 			return
 		}
 	} else {
+		// Обновляем количество существующего товара
 		newQuantity := existingItem.Quantity + input.Quantity
 		if newQuantity <= 0 {
 			_, err = app.DB.Exec(`DELETE FROM cart WHERE id = $1`, existingItem.ID)
