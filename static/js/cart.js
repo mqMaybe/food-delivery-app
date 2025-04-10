@@ -60,12 +60,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         const cart = await response.json();
         console.log('>>> Ответ от /api/cart:', cart);
 
-        // Обработка случая, когда cart null или не массив
-        if (!cart || !Array.isArray(cart)) {
+        // Проверяем, что cart — это объект с полем items, и items — это массив
+        if (!cart || typeof cart !== 'object' || !cart.items || !Array.isArray(cart.items)) {
             throw new Error('Получен некорректный ответ от сервера');
         }
 
-        if (cart.length === 0) {
+        // Используем cart.items вместо cart
+        const cartItems = cart.items;
+
+        if (cartItems.length === 0) {
             cartItemsContainer.innerHTML = '<p>Корзина пуста</p>';
             orderSummaryItems.innerHTML = '';
             cartTotal.innerHTML = '';
@@ -77,24 +80,25 @@ document.addEventListener('DOMContentLoaded', async () => {
         orderSummaryItems.innerHTML = '';
         let total = 0;
 
-        cart.forEach(item => {
-            const itemTotal = item.price * item.quantity;
+        cartItems.forEach(item => {
+            // Приводим имена полей к ожидаемому формату
+            const itemTotal = item.Price * item.Quantity;
             total += itemTotal;
 
             const cartItem = document.createElement('div');
             cartItem.className = 'cart-item';
             cartItem.innerHTML = `
-                <img src="${item.image_url && item.image_url.String ? item.image_url.String : '/static/images/food-placeholder.jpg'}" alt="${item.name}">
+                <img src="${item.ImageURL && item.ImageURL.String ? item.ImageURL.String : '/static/images/food-placeholder.jpg'}" alt="${item.MenuItemName}">
                 <div class="cart-item-details">
-                    <h5>${item.name}</h5>
-                    <p>Цена: ${item.price.toFixed(2)} ₽</p>
+                    <h5>${item.MenuItemName}</h5>
+                    <p>Цена: ${item.Price.toFixed(2)} ₽</p>
                     <div class="quantity-control">
-                        <button onclick="updateQuantity(${item.id}, -1)">−</button>
-                        <input type="text" value="${item.quantity}" readonly>
-                        <button onclick="updateQuantity(${item.id}, 1)">+</button>
+                        <button onclick="updateQuantity(${item.ID}, -1)">−</button>
+                        <input type="text" value="${item.Quantity}" readonly>
+                        <button onclick="updateQuantity(${item.ID}, 1)">+</button>
                     </div>
                     <p>Итого: ${itemTotal.toFixed(2)} ₽</p>
-                    <button class="remove-btn" onclick="removeFromCart(${item.id})">Удалить</button>
+                    <button class="remove-btn" onclick="removeFromCart(${item.ID})">Удалить</button>
                 </div>
             `;
             cartItemsContainer.appendChild(cartItem);
@@ -102,7 +106,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const summaryItem = document.createElement('div');
             summaryItem.className = 'order-summary-item';
             summaryItem.innerHTML = `
-                <span>${item.name} x${item.quantity}</span>
+                <span>${item.MenuItemName} x${item.Quantity}</span>
                 <span>${itemTotal.toFixed(2)} ₽</span>
             `;
             orderSummaryItems.appendChild(summaryItem);
