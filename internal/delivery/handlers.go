@@ -792,25 +792,34 @@ func (app *App) GetCart(c *gin.Context) {
 	}
 
 	var cartItems []struct {
-		ID       int            `db:"id" json:"id"`
-		Name     string         `db:"name" json:"name"`
-		Price    float64        `db:"price" json:"price"`
-		Quantity int            `db:"quantity" json:"quantity"`
-		ImageURL sql.NullString `db:"image_url" json:"image_url"`
+		ID           int     `db:"id"`
+		MenuItemID   int     `db:"menu_item_id"`
+		MenuItemName string  `db:"menu_item_name"`
+		Quantity     int     `db:"quantity"`
+		Price        float64 `db:"price"`
 	}
 
 	err := app.DB.Select(&cartItems, `
-        SELECT c.id, m.name, m.price, c.quantity, m.image_url
+        SELECT c.id, c.menu_item_id, m.name AS menu_item_name, c.quantity, m.price
         FROM cart c
         JOIN menu m ON c.menu_item_id = m.id
         WHERE c.user_id = $1
     `, userID)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			// Возвращаем объект с пустым массивом вместо null
+			c.JSON(http.StatusOK, gin.H{
+				"items": []interface{}{},
+			})
+			return
+		}
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Не удалось загрузить корзину"})
 		return
 	}
 
-	c.JSON(http.StatusOK, cartItems)
+	c.JSON(http.StatusOK, gin.H{
+		"items": cartItems,
+	})
 }
 
 // RemoveFromCart удаляет один элемент из корзины

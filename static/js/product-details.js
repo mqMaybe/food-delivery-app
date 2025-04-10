@@ -73,7 +73,7 @@ async function orderNow(menuItemId, quantity) {
         console.log('Тип menuItemId:', typeof menuItemId, 'Значение:', menuItemId); // Логируем тип и значение
         console.log('Тип quantity:', typeof quantity, 'Значение:', quantity);
 
-        const restaurantId = parseInt(newOrderButton.getAttribute('data-restaurant-id'), 10);
+        const restaurantId = parseInt(order-now-btn.getAttribute('data-restaurant-id'), 10);
 
         const payload = {
             menu_item_id: menuItemId,

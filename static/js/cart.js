@@ -1,5 +1,3 @@
-// static/js/cart.js
-
 async function logout() {
     try {
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -60,10 +58,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         const cart = await response.json();
-        console.log('Корзина:', cart);
+        console.log('>>> Ответ от /api/cart:', cart);
+
+        // Обработка случая, когда cart null или не массив
+        if (!cart || !Array.isArray(cart)) {
+            throw new Error('Получен некорректный ответ от сервера');
+        }
 
         if (cart.length === 0) {
-            cartItemsContainer.innerHTML = '';
+            cartItemsContainer.innerHTML = '<p>Корзина пуста</p>';
             orderSummaryItems.innerHTML = '';
             cartTotal.innerHTML = '';
             checkoutButton.style.display = 'none';
@@ -177,10 +180,9 @@ async function removeFromCart(itemId) {
 async function checkout() {
     try {
         const authToken = localStorage.getItem('auth_token') || '';
-        const promoCode = document.getElementById('promoCode').value || '';
-        const deliveryAddress = document.getElementById('deliveryAddress').value.trim();
+        const promoCode = document.getElementById('promoCode')?.value || '';
+        const deliveryAddress = document.getElementById('deliveryAddress')?.value.trim();
 
-        // Валидация адреса доставки
         if (!deliveryAddress) {
             throw new Error('Пожалуйста, укажите адрес доставки');
         }
