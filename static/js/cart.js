@@ -26,8 +26,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             throw new Error('Не удалось загрузить корзину');
         }
 
-        const cart = await response.json();
-        console.log('Корзина:', cart);
+        const items = await response.json();
+        const cart = { items };
 
         if (cart.length === 0) {
             cartItemsContainer.innerHTML = '';
