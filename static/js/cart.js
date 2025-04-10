@@ -31,7 +31,8 @@ async function logout() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
+// Функция для рендеринга корзины
+function renderCart(cartItems) {
     const cartItemsContainer = document.getElementById('cart-items');
     const orderSummaryItems = document.getElementById('order-summary-items');
     const cartTotal = document.getElementById('cart-total');
@@ -39,6 +40,64 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (!cartItemsContainer || !orderSummaryItems || !cartTotal || !checkoutButton) {
         console.error('Не удалось найти элементы на странице');
+        return;
+    }
+
+    cartItemsContainer.innerHTML = '';
+    orderSummaryItems.innerHTML = '';
+    let total = 0;
+
+    if (!cartItems || cartItems.length === 0) {
+        cartItemsContainer.innerHTML = '<p>Корзина пуста</p>';
+        orderSummaryItems.innerHTML = '';
+        cartTotal.innerHTML = '';
+        checkoutButton.style.display = 'none';
+        return;
+    }
+
+    cartItems.forEach(item => {
+        const itemTotal = item.Price * item.Quantity;
+        total += itemTotal;
+
+        const cartItem = document.createElement('div');
+        cartItem.className = 'cart-item';
+        cartItem.innerHTML = `
+            <img src="${item.ImageURL && item.ImageURL.String ? item.ImageURL.String : '/static/images/food-placeholder.jpg'}" alt="${item.MenuItemName}">
+            <div class="cart-item-details">
+                <h5>${item.MenuItemName}</h5>
+                <p>Цена: ${item.Price.toFixed(2)} ₽</p>
+                <div class="quantity-control">
+                    <button onclick="updateQuantity(${item.ID}, -1)">−</button>
+                    <input type="text" value="${item.Quantity}" readonly>
+                    <button onclick="updateQuantity(${item.ID}, 1)">+</button>
+                </div>
+                <p>Итого: ${itemTotal.toFixed(2)} ₽</p>
+                <button class="remove-btn" onclick="removeFromCart(${item.ID})">Удалить</button>
+            </div>
+        `;
+        cartItemsContainer.appendChild(cartItem);
+
+        const summaryItem = document.createElement('div');
+        summaryItem.className = 'order-summary-item';
+        summaryItem.innerHTML = `
+            <span>${item.MenuItemName} x${item.Quantity}</span>
+            <span>${itemTotal.toFixed(2)} ₽</span>
+        `;
+        orderSummaryItems.appendChild(summaryItem);
+    });
+
+    cartTotal.innerHTML = `
+        <span>Общая сумма:</span>
+        <span>${total.toFixed(2)} ₽</span>
+    `;
+    checkoutButton.style.display = 'block';
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+    const checkoutButton = document.getElementById('checkoutButton');
+
+    if (!checkoutButton) {
+        console.error('Не удалось найти кнопку оформления заказа');
         return;
     }
 
@@ -60,66 +119,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         const cart = await response.json();
         console.log('>>> Ответ от /api/cart:', cart);
 
-        // Проверяем, что cart — это объект с полем items, и items — это массив
         if (!cart || typeof cart !== 'object' || !cart.items || !Array.isArray(cart.items)) {
-            throw new Error('Получен некорректный ответ от сервера');
+            throw new Error('Корзина пуста');
         }
 
-        // Используем cart.items вместо cart
-        const cartItems = cart.items;
-
-        if (cartItems.length === 0) {
-            cartItemsContainer.innerHTML = '<p>Корзина пуста</p>';
-            orderSummaryItems.innerHTML = '';
-            cartTotal.innerHTML = '';
-            checkoutButton.style.display = 'none';
-            return;
-        }
-
-        cartItemsContainer.innerHTML = '';
-        orderSummaryItems.innerHTML = '';
-        let total = 0;
-
-        cartItems.forEach(item => {
-            // Приводим имена полей к ожидаемому формату
-            const itemTotal = item.Price * item.Quantity;
-            total += itemTotal;
-
-            const cartItem = document.createElement('div');
-            cartItem.className = 'cart-item';
-            cartItem.innerHTML = `
-                <img src="${item.ImageURL && item.ImageURL.String ? item.ImageURL.String : '/static/images/food-placeholder.jpg'}" alt="${item.MenuItemName}">
-                <div class="cart-item-details">
-                    <h5>${item.MenuItemName}</h5>
-                    <p>Цена: ${item.Price.toFixed(2)} ₽</p>
-                    <div class="quantity-control">
-                        <button onclick="updateQuantity(${item.ID}, -1)">−</button>
-                        <input type="text" value="${item.Quantity}" readonly>
-                        <button onclick="updateQuantity(${item.ID}, 1)">+</button>
-                    </div>
-                    <p>Итого: ${itemTotal.toFixed(2)} ₽</p>
-                    <button class="remove-btn" onclick="removeFromCart(${item.ID})">Удалить</button>
-                </div>
-            `;
-            cartItemsContainer.appendChild(cartItem);
-
-            const summaryItem = document.createElement('div');
-            summaryItem.className = 'order-summary-item';
-            summaryItem.innerHTML = `
-                <span>${item.MenuItemName} x${item.Quantity}</span>
-                <span>${itemTotal.toFixed(2)} ₽</span>
-            `;
-            orderSummaryItems.appendChild(summaryItem);
-        });
-
-        cartTotal.innerHTML = `
-            <span>Общая сумма:</span>
-            <span>${total.toFixed(2)} ₽</span>
-        `;
-        checkoutButton.style.display = 'block';
+        renderCart(cart.items);
     } catch (error) {
         console.error('Ошибка при загрузке корзины:', error);
-        cartItemsContainer.innerHTML = `<p class="text-danger">${error.message}</p>`;
+        const cartItemsContainer = document.getElementById('cart-items');
+        if (cartItemsContainer) {
+            cartItemsContainer.innerHTML = `<p class="text-danger">${error.message}</p>`;
+        }
     }
 });
 
@@ -149,7 +159,24 @@ async function updateQuantity(itemId, change) {
             throw new Error(errorData.error || 'Не удалось обновить количество');
         }
 
-        window.location.reload();
+        const cartResponse = await fetch('/api/cart', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`,
+            },
+        });
+
+        if (!cartResponse.ok) {
+            throw new Error('Не удалось загрузить корзину после обновления');
+        }
+
+        const cart = await cartResponse.json();
+        if (!cart || typeof cart !== 'object' || !cart.items || !Array.isArray(cart.items)) {
+            throw new Error('Корзина пуста');
+        }
+
+        renderCart(cart.items);
     } catch (error) {
         console.error('Ошибка при обновлении количества:', error);
         alert(error.message);
@@ -174,7 +201,24 @@ async function removeFromCart(itemId) {
             throw new Error(errorData.error || 'Не удалось удалить товар из корзины');
         }
 
-        window.location.reload();
+        const cartResponse = await fetch('/api/cart', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`,
+            },
+        });
+
+        if (!cartResponse.ok) {
+            throw new Error('Не удалось загрузить корзину после удаления');
+        }
+
+        const cart = await cartResponse.json();
+        if (!cart || typeof cart !== 'object' || !cart.items || !Array.isArray(cart.items)) {
+            throw new Error('Корзина пуста');
+        }
+
+        renderCart(cart.items);
     } catch (error) {
         console.error('Ошибка при удалении товара:', error);
         alert(error.message);
