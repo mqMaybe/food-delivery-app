@@ -73,16 +73,15 @@
         display: block;
     }
   }
-  
-  /* Стили для шапки лендинга */
+
   header {
-    padding: 20px 0;
-    position: absolute;
+    background-color: #333;
+    padding: 15px 0;
     width: 100%;
-    top: 0;
-    left: 0;
-    z-index: 10;
-    background: transparent;
+    margin: 0;
+    height: 70px;
+    display: flex;
+    align-items: center;
   }
   
   header .container {
@@ -92,11 +91,8 @@
   }
   
   .logo h1 {
-    font-size: 24px;
-    font-weight: 700;
     color: white;
-  }
-  
-  nav .btn {
-    margin-left: 15px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
   }
