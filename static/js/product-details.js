@@ -70,17 +70,21 @@ async function orderNow(menuItemId, quantity) {
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         if (!csrfToken) throw new Error('CSRF-токен не найден');
 
-        console.log('Тип menuItemId:', typeof menuItemId, 'Значение:', menuItemId); // Логируем тип и значение
+        console.log('Тип menuItemId:', typeof menuItemId, 'Значение:', menuItemId);
         console.log('Тип quantity:', typeof quantity, 'Значение:', quantity);
 
-        const restaurantId = parseInt(order-now-btn.getAttribute('data-restaurant-id'), 10);
+        // Исправляем получение restaurantId
+        const orderButton = document.querySelector('.order-now-btn');
+        if (!orderButton) throw new Error('Кнопка "Заказать сейчас" не найдена');
+        const restaurantId = parseInt(orderButton.getAttribute('data-restaurant-id'), 10);
+        if (isNaN(restaurantId)) throw new Error('Неверный ID ресторана');
 
         const payload = {
             menu_item_id: menuItemId,
             quantity: quantity,
             restaurant_id: restaurantId,
         };
-        console.log('Отправляемый JSON:', JSON.stringify(payload)); // Логируем JSON
+        console.log('Отправляемый JSON:', JSON.stringify(payload));
 
         const response = await fetch('/api/cart/add', {
             method: 'POST',
@@ -89,6 +93,7 @@ async function orderNow(menuItemId, quantity) {
                 'X-CSRF-Token': csrfToken,
             },
             body: JSON.stringify(payload),
+            credentials: 'include',
         });
 
         const contentType = response.headers.get('Content-Type');
