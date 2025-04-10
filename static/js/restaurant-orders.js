@@ -94,8 +94,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <p>Адрес доставки: ${order.delivery_address}</p>
                     <p>Итого: ${order.total_price} ₽</p>
                     <select onchange="updateOrderStatus(${order.id}, ${restaurantId}, this.value)">
-                        <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>В ожидании</option>
+                        <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>Не оплачен</option>
                         <option value="preparing" ${order.status === 'preparing' ? 'selected' : ''}>Готовится</option>
+                        <option value="en_route" ${order.status === 'en_route' ? 'selected' : ''}>В пути</option>
                         <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>Доставлен</option>
                     </select>
                 `;

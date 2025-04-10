@@ -182,8 +182,9 @@ func (app *App) AddToCart(c *gin.Context) {
 	c.Request.Body = io.NopCloser(bytes.NewBuffer(body))
 
 	var input struct {
-		MenuItemID int `json:"menu_item_id"`
-		Quantity   int `json:"quantity"`
+		MenuItemID   int `json:"menu_item_id"`
+		Quantity     int `json:"quantity"`
+		RestaurantID int `json:"restaurant_id"` // Добавляем поле
 	}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -192,13 +193,14 @@ func (app *App) AddToCart(c *gin.Context) {
 		return
 	}
 
-	log.Printf("Распарсенные данные: MenuItemID=%d, Quantity=%d", input.MenuItemID, input.Quantity)
+	log.Printf("Распарсенные данные: MenuItemID=%d, Quantity=%d, RestaurantID=%d", input.MenuItemID, input.Quantity, input.RestaurantID)
 
-	if input.MenuItemID <= 0 || input.Quantity <= 0 {
-		c.JSON(400, gin.H{"error": "Неверный ID блюда или количество"})
+	if input.MenuItemID <= 0 || input.Quantity <= 0 || input.RestaurantID <= 0 {
+		c.JSON(400, gin.H{"error": "Неверный ID блюда, количество или ID ресторана"})
 		return
 	}
 
+	// Проверяем существование блюда
 	var menuItem models.MenuItem
 	err = app.DB.Get(&menuItem, `
         SELECT id, restaurant_id, price
@@ -216,17 +218,24 @@ func (app *App) AddToCart(c *gin.Context) {
 	}
 	log.Printf("MenuItem: ID=%d, RestaurantID=%d", menuItem.ID, menuItem.RestaurantID)
 
+	// Проверяем, что блюдо принадлежит указанному ресторану
+	if menuItem.RestaurantID != input.RestaurantID {
+		log.Printf("Блюдо с ID=%d принадлежит ресторану с ID=%d, но передан restaurant_id=%d", menuItem.ID, menuItem.RestaurantID, input.RestaurantID)
+		c.JSON(400, gin.H{"error": "Блюдо не принадлежит указанному ресторану"})
+		return
+	}
+
 	// Проверяем, существует ли ресторан
 	var restaurantID int
 	err = app.DB.Get(&restaurantID, `
         SELECT id
         FROM restaurants
         WHERE id = $1
-    `, menuItem.RestaurantID)
+    `, input.RestaurantID)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			log.Printf("Ресторан с ID=%d не найден", menuItem.RestaurantID)
-			c.JSON(400, gin.H{"error": "Ресторан, связанный с блюдом, не найден"})
+			log.Printf("Ресторан с ID=%d не найден", input.RestaurantID)
+			c.JSON(400, gin.H{"error": "Ресторан не найден"})
 		} else {
 			log.Printf("Ошибка при проверке ресторана: %v", err)
 			c.JSON(500, gin.H{"error": "Ошибка при проверке ресторана"})
@@ -234,6 +243,7 @@ func (app *App) AddToCart(c *gin.Context) {
 		return
 	}
 
+	// Проверяем, есть ли уже этот товар в корзине
 	var existingItem struct {
 		ID       int `db:"id"`
 		Quantity int `db:"quantity"`
@@ -251,16 +261,18 @@ func (app *App) AddToCart(c *gin.Context) {
 	}
 
 	if err == sql.ErrNoRows {
+		// Добавляем новый товар в корзину
 		_, err = app.DB.Exec(`
-            INSERT INTO cart (user_id, menu_item_id, quantity, created_at)
-            VALUES ($1, $2, $3, NOW())
-        `, userID, input.MenuItemID, input.Quantity)
+            INSERT INTO cart (user_id, menu_item_id, quantity, created_at, restaurant_id)
+            VALUES ($1, $2, $3, NOW(), $4)
+        `, userID, input.MenuItemID, input.Quantity, input.RestaurantID)
 		if err != nil {
 			log.Printf("Ошибка при добавлении товара в корзину (INSERT): %v", err)
 			c.JSON(500, gin.H{"error": "Не удалось обновить корзину"})
 			return
 		}
 	} else {
+		// Обновляем количество существующего товара
 		newQuantity := existingItem.Quantity + input.Quantity
 		if newQuantity <= 0 {
 			_, err = app.DB.Exec(`DELETE FROM cart WHERE id = $1`, existingItem.ID)
@@ -633,6 +645,7 @@ func (app *App) AddMenuItem(c *gin.Context) {
 // UpdateMenuItem обновляет информацию о блюде
 func (app *App) UpdateMenuItem(c *gin.Context) {
 	userID, _ := c.Get("user_id")
+	log.Printf("UserID: %v", userID)
 
 	var input struct {
 		MenuID       int     `json:"menu_id"`
@@ -642,23 +655,32 @@ func (app *App) UpdateMenuItem(c *gin.Context) {
 		Description  string  `json:"description"`
 	}
 	if err := c.ShouldBindJSON(&input); err != nil {
+		log.Printf("Ошибка при парсинге JSON: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Неверный формат данных"})
 		return
 	}
+	log.Printf("Input: MenuID=%d, RestaurantID=%d", input.MenuID, input.RestaurantID)
 
 	var restaurantUserID int
 	err := app.DB.QueryRow("SELECT id FROM restaurants WHERE id = $1 AND user_id = $2",
 		input.RestaurantID, userID).Scan(&restaurantUserID)
 	if err != nil {
-		c.JSON(http.StatusForbidden, gin.H{"error": "У вас нет прав для редактирования этого блюда"})
+		if err == sql.ErrNoRows {
+			log.Printf("Ресторан с ID=%d не принадлежит пользователю с ID=%v", input.RestaurantID, userID)
+			c.JSON(http.StatusForbidden, gin.H{"error": "У вас нет прав для редактирования этого блюда"})
+		} else {
+			log.Printf("Ошибка при проверке прав: %v", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Ошибка при проверке прав"})
+		}
 		return
 	}
 
 	_, err = app.DB.Exec(`
-		UPDATE menu SET name = $1, price = $2, description = $3
-		WHERE id = $4 AND restaurant_id = $5`,
+        UPDATE menu SET name = $1, price = $2, description = $3
+        WHERE id = $4 AND restaurant_id = $5`,
 		input.Name, input.Price, input.Description, input.MenuID, input.RestaurantID)
 	if err != nil {
+		log.Printf("Ошибка при обновлении блюда: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Не удалось обновить блюдо"})
 		return
 	}
@@ -669,27 +691,37 @@ func (app *App) UpdateMenuItem(c *gin.Context) {
 // DeleteMenuItem удаляет блюдо из меню ресторана
 func (app *App) DeleteMenuItem(c *gin.Context) {
 	userID, _ := c.Get("user_id")
+	log.Printf("UserID: %v", userID)
 
 	var input struct {
 		MenuID       int `json:"menu_id"`
 		RestaurantID int `json:"restaurant_id"`
 	}
 	if err := c.ShouldBindJSON(&input); err != nil {
+		log.Printf("Ошибка при парсинге JSON: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Неверный формат данных"})
 		return
 	}
+	log.Printf("Input: MenuID=%d, RestaurantID=%d", input.MenuID, input.RestaurantID)
 
 	var restaurantUserID int
 	err := app.DB.QueryRow("SELECT id FROM restaurants WHERE id = $1 AND user_id = $2",
 		input.RestaurantID, userID).Scan(&restaurantUserID)
 	if err != nil {
-		c.JSON(http.StatusForbidden, gin.H{"error": "У вас нет прав для удаления этого блюда"})
+		if err == sql.ErrNoRows {
+			log.Printf("Ресторан с ID=%d не принадлежит пользователю с ID=%v", input.RestaurantID, userID)
+			c.JSON(http.StatusForbidden, gin.H{"error": "У вас нет прав для удаления этого блюда"})
+		} else {
+			log.Printf("Ошибка при проверке прав: %v", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Ошибка при проверке прав"})
+		}
 		return
 	}
 
 	_, err = app.DB.Exec("DELETE FROM menu WHERE id = $1 AND restaurant_id = $2",
 		input.MenuID, input.RestaurantID)
 	if err != nil {
+		log.Printf("Ошибка при удалении блюда: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Не удалось удалить блюдо"})
 		return
 	}
@@ -772,25 +804,34 @@ func (app *App) GetCart(c *gin.Context) {
 	}
 
 	var cartItems []struct {
-		ID       int            `db:"id" json:"id"`
-		Name     string         `db:"name" json:"name"`
-		Price    float64        `db:"price" json:"price"`
-		Quantity int            `db:"quantity" json:"quantity"`
-		ImageURL sql.NullString `db:"image_url" json:"image_url"`
+		ID           int     `db:"id"`
+		MenuItemID   int     `db:"menu_item_id"`
+		MenuItemName string  `db:"menu_item_name"`
+		Quantity     int     `db:"quantity"`
+		Price        float64 `db:"price"`
 	}
 
 	err := app.DB.Select(&cartItems, `
-        SELECT c.id, m.name, m.price, c.quantity, m.image_url
+        SELECT c.id, c.menu_item_id, m.name AS menu_item_name, c.quantity, m.price
         FROM cart c
         JOIN menu m ON c.menu_item_id = m.id
         WHERE c.user_id = $1
     `, userID)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			// Возвращаем объект с пустым массивом вместо null
+			c.JSON(http.StatusOK, gin.H{
+				"items": []interface{}{},
+			})
+			return
+		}
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Не удалось загрузить корзину"})
 		return
 	}
 
-	c.JSON(http.StatusOK, cartItems)
+	c.JSON(http.StatusOK, gin.H{
+		"items": cartItems,
+	})
 }
 
 // RemoveFromCart удаляет один элемент из корзины
@@ -904,6 +945,13 @@ func (app *App) Checkout(c *gin.Context) {
 			return
 		}
 	}
+
+	// Очистка корзины пользователя после успешного оформления заказа
+	_, err = app.DB.Exec(`DELETE FROM cart WHERE user_id = $1`, userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Не удалось очистить корзину"})
+		return
+	}
 }
 
 // GetUserRestaurants возвращает рестораны, привязанные к текущему пользователю
@@ -965,6 +1013,7 @@ func (app *App) UpdateOrderStatus(c *gin.Context) {
 	}
 
 	validStatuses := map[string]bool{
+		"pending":   true,
 		"preparing": true,
 		"en_route":  true,
 		"delivered": true,

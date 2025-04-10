@@ -1,27 +1,32 @@
 /* navbar.css */
-
-header {
-  background-color: #333;
-  padding: 15px 0;
-  width: 100%;
-  margin: 0;
-  height: 70px;
-  display: flex;
-  align-items: center;
-}
-
-header .container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.logo h1 {
-  color: white;
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin: 0;
-}
+  /* Стили для шапки лендинга */
+  header {
+    padding: 20px 0;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background-color: #333;
+    margin: 0;
+    height: 70px;
+    display: flex;
+    align-items: center;
+  }
+  
+  header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .logo h1 {
+    font-size: 24px;
+    font-weight: 700;
+    color: white;
+  }
+  
+  nav .btn {
+    margin-left: 15px;
+  }
 
 nav {
   display: flex;
