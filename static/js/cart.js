@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         orderSummaryItems.innerHTML = '';
         let total = 0;
 
-        cart.forEach(item => {
+        cart.items.forEach(item => {
             const itemTotal = item.price * item.quantity;
             total += itemTotal;
 
