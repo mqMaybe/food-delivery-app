@@ -65,14 +65,25 @@ func SetupRoutes(r *gin.Engine, app *delivery.App) {
 				return
 			}
 			var menuItem struct {
-				ID          int
-				Name        string
-				Description sql.NullString
-				Price       float64
-				ImageURL    sql.NullString
+				ID           int
+				Name         string
+				Description  sql.NullString
+				Price        float64
+				ImageURL     sql.NullString
+				RestaurantID int
 			}
-			err = app.DB.QueryRow(`SELECT id, name, description, price, image_url FROM menu WHERE id = $1`, itemID).
-				Scan(&menuItem.ID, &menuItem.Name, &menuItem.Description, &menuItem.Price, &menuItem.ImageURL)
+			err = app.DB.QueryRow(`
+				SELECT id, name, description, price, image_url, restaurant_id 
+				FROM menu 
+				WHERE id = $1`, itemID).
+				Scan(
+					&menuItem.ID,
+					&menuItem.Name,
+					&menuItem.Description,
+					&menuItem.Price,
+					&menuItem.ImageURL,
+					&menuItem.RestaurantID, // ← добавляем это
+				)
 			if err != nil {
 				if err == sql.ErrNoRows {
 					c.JSON(404, gin.H{"error": "Блюдо не найдено"})
